@@ -23,7 +23,7 @@ export default function Home() {
           <p style={{ fontSize: 14, color: "var(--text-secondary)" }}>Welcome back,</p>
           <h1 style={{ fontSize: 26, fontWeight: 700 }}>{userProfile.name.split(" ")[0]}</h1>
         </div>
-        <Logo size={80} />
+        <Logo size={160} />
       </div>
 
       {/* Top row: stats + dermatologist */}
