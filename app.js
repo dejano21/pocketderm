@@ -1,20 +1,310 @@
 // ─── State ───────────────────────────────────────────────────────────────────
+const USER_STORAGE_KEY = 'pocketderm_userAccounts';
+const SESSION_STORAGE_KEY = 'pocketderm_currentUser';
+
 const state = {
   currentImage: null,
   currentImageDataURL: null,
   scanHistory: [],
   analysisResult: null,
+  currentUser: null,
+  userSettings: {
+    pushNotifications: true,
+    monthlyReminders: true,
+  },
+  assistantMessages: [],
+  bodyMapView: 'front',
+  bodyMapFilter: 'all',
 };
 
-// ─── Navigation ──────────────────────────────────────────────────────────────
-function navigateTo(screenId) {
-  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
-  document.getElementById('screen-' + screenId).classList.add('active');
-  document.querySelector(`[data-screen="${screenId}"]`).classList.add('active');
+const bodyMapMarkers = [
+  { id: 'a1', side: 'front', category: 'low', label: 'Left shoulder', top: '24%', left: '44%' },
+  { id: 'a2', side: 'front', category: 'congenital', label: 'Chest', top: '36%', left: '48%' },
+  { id: 'a3', side: 'front', category: 'blueNevus', label: 'Right arm', top: '34%', left: '64%' },
+  { id: 'a4', side: 'front', category: 'review', label: 'Right thigh', top: '68%', left: '56%' },
+  { id: 'a5', side: 'front', category: 'high', label: 'Left knee', top: '78%', left: '40%' },
+  { id: 'b1', side: 'back', category: 'low', label: 'Upper back', top: '26%', left: '48%' },
+  { id: 'b2', side: 'back', category: 'congenital', label: 'Left lower back', top: '44%', left: '34%' },
+  { id: 'b3', side: 'back', category: 'blueNevus', label: 'Right shoulder blade', top: '30%', left: '60%' },
+  { id: 'b4', side: 'back', category: 'review', label: 'Right calf', top: '70%', left: '58%' },
+  { id: 'b5', side: 'back', category: 'high', label: 'Spine', top: '40%', left: '48%' },
+];
 
+function getUsers() {
+  return JSON.parse(localStorage.getItem(USER_STORAGE_KEY) || '{}');
+}
+
+function saveUsers(users) {
+  localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(users));
+}
+
+async function sha256Hex(message) {
+  const buffer = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(message));
+  return Array.from(new Uint8Array(buffer)).map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
+async function setCurrentUser(user) {
+  state.currentUser = user;
+  localStorage.setItem(SESSION_STORAGE_KEY, JSON.stringify({ username: user.username }));
+  updateNavUser();
+}
+
+function clearCurrentUser() {
+  state.currentUser = null;
+  localStorage.removeItem(SESSION_STORAGE_KEY);
+  updateNavUser();
+}
+
+function loadCurrentUser() {
+  const session = JSON.parse(localStorage.getItem(SESSION_STORAGE_KEY) || 'null');
+  const users = getUsers();
+  if (session && session.username && users[session.username]) {
+    state.currentUser = users[session.username];
+    loadUserSettings();
+  }
+  updateNavUser();
+}
+
+async function loginUser() {
+  const username = document.getElementById('login-username').value.trim();
+  const password = document.getElementById('login-password').value;
+  const users = getUsers();
+
+  if (!username || !password) return alert('Please enter username and password.');
+  let user = users[username];
+
+  if (!user) {
+    const passwordHash = await sha256Hex(password);
+    user = {
+      username,
+      name: username.split(' ').map(part => part.charAt(0).toUpperCase() + part.slice(1)).join(' ') || 'User',
+      email: `${username.replace(/\s+/g, '').toLowerCase()}@example.com`,
+      age: 30,
+      skinType: 'Oily',
+      dermatologist: {
+        name: 'Dr. Rebecca Chen',
+        clinic: 'Renew Skin Clinic',
+        lastVisit: 'March 14, 2026',
+        connectionStatus: 'Connected',
+      },
+      passwordHash,
+    };
+    users[username] = user;
+    saveUsers(users);
+  }
+
+  await setCurrentUser(user);
+  loadUserSettings();
+  renderProfile();
+  navigateTo('home');
+}
+
+async function signupUser() {
+  const name = document.getElementById('signup-name').value.trim();
+  const email = document.getElementById('signup-email').value.trim();
+  const username = document.getElementById('signup-username').value.trim();
+  const password = document.getElementById('signup-password').value;
+  const age = document.getElementById('signup-age').value;
+  const skinType = document.getElementById('signup-skin-type').value;
+  const users = getUsers();
+
+  if (!name || !email || !username || !password || !age || !skinType) {
+    return alert('Please complete all fields to create your account.');
+  }
+  if (users[username]) {
+    return alert('That username is already taken.');
+  }
+
+  const passwordHash = await sha256Hex(password);
+  const user = {
+    username,
+    name,
+    email,
+    age,
+    skinType,
+    dermatologist: {
+      name: 'Dr. Rebecca Chen',
+      clinic: 'Renew Skin Clinic',
+      lastVisit: 'March 14, 2026',
+      connectionStatus: 'Connected',
+    },
+  };
+
+  users[username] = { ...user, passwordHash };
+  saveUsers(users);
+  await setCurrentUser(user);
+  initializeUserSettings();
+  renderProfile();
+  navigateTo('home');
+}
+
+function logout() {
+  clearCurrentUser();
+  navigateTo('login');
+}
+
+function initializeUserSettings() {
+  if (!state.currentUser) return;
+  const prefix = `pocketderm_settings_${state.currentUser.username}`;
+  const settings = {
+    pushNotifications: true,
+    monthlyReminders: true,
+  };
+  localStorage.setItem(prefix, JSON.stringify(settings));
+  state.userSettings = settings;
+}
+
+function loadUserSettings() {
+  if (!state.currentUser) return;
+  const prefix = `pocketderm_settings_${state.currentUser.username}`;
+  state.userSettings = JSON.parse(localStorage.getItem(prefix) || '{}');
+  if (typeof state.userSettings.pushNotifications !== 'boolean') {
+    state.userSettings.pushNotifications = true;
+  }
+  if (typeof state.userSettings.monthlyReminders !== 'boolean') {
+    state.userSettings.monthlyReminders = true;
+  }
+  localStorage.setItem(prefix, JSON.stringify(state.userSettings));
+}
+
+function updateNotificationSetting(key, value) {
+  if (!state.currentUser) return;
+  state.userSettings[key] = value;
+  const prefix = `pocketderm_settings_${state.currentUser.username}`;
+  localStorage.setItem(prefix, JSON.stringify(state.userSettings));
+}
+
+function updateNavUser() {
+  const navUser = document.getElementById('nav-user');
+  if (!navUser) return;
+  if (state.currentUser) {
+    const initials = state.currentUser.name.split(' ').map(part => part[0]).slice(0, 2).join('').toUpperCase();
+    navUser.textContent = initials;
+  } else {
+    navUser.textContent = '👤';
+  }
+}
+
+function renderProfile() {
+  if (!state.currentUser) return;
+  document.getElementById('profile-avatar').textContent = state.currentUser.name.split(' ').map(part => part[0]).slice(0, 2).join('').toUpperCase();
+  document.getElementById('profile-name').textContent = state.currentUser.name;
+  document.getElementById('profile-email').textContent = state.currentUser.email;
+  document.getElementById('profile-age').textContent = state.currentUser.age;
+  document.getElementById('profile-skin-type').textContent = state.currentUser.skinType;
+  document.getElementById('derm-name').textContent = state.currentUser.dermatologist.name;
+  document.getElementById('derm-clinic').textContent = state.currentUser.dermatologist.clinic;
+  document.getElementById('derm-last-visit').textContent = `Last visit: ${state.currentUser.dermatologist.lastVisit}`;
+  document.getElementById('toggle-push').checked = !!state.userSettings.pushNotifications;
+  document.getElementById('toggle-monthly').checked = !!state.userSettings.monthlyReminders;
+}
+
+function renderAssistantMessages() {
+  const container = document.getElementById('assistant-messages');
+  if (!container) return;
+  container.innerHTML = state.assistantMessages.map(msg => `
+    <div class="assistant-bubble ${msg.sender}">
+      <div class="assistant-label">${msg.sender === 'assistant' ? 'PocketDerm' : 'You'}</div>
+      <p>${msg.text}</p>
+    </div>
+  `).join('');
+  container.scrollTop = container.scrollHeight;
+}
+
+function postAssistantMessage(sender, text) {
+  state.assistantMessages.push({ sender, text });
+  renderAssistantMessages();
+}
+
+function handleAssistantSend(inputText) {
+  const inputEl = document.getElementById('assistant-input');
+  const text = (inputText || inputEl.value || '').trim();
+  if (!text) return;
+  inputEl.value = '';
+  postAssistantMessage('user', text);
+  const reply = generateAssistantResponse(text);
+  setTimeout(() => postAssistantMessage('assistant', reply), 600);
+}
+
+function generateAssistantResponse(prompt) {
+  const lower = prompt.toLowerCase();
+  if (lower.includes('result')) {
+    return 'Your result indicates the most likely lesion type and risk level. Remember, this is a screening aid — please review any concerns with your dermatologist.';
+  }
+  if (lower.includes('book') || lower.includes('dermatologist')) {
+    return 'If the scan shows moderate or high risk, booking an appointment is a good next step. Your connected dermatologist can review the image and provide guidance.';
+  }
+  if (lower.includes('photo') || lower.includes('take a better photo')) {
+    return 'Use good lighting, keep the mole centered, avoid shadows, and hold the camera steady. A flat surface and a second person can help capture the lesion clearly.';
+  }
+  if (lower.includes('abcde')) {
+    return 'ABCDE stands for Asymmetry, Border, Color, Diameter, and Evolution. If any of these characteristics change, follow up with your dermatologist.';
+  }
+  if (lower.includes('medical') || lower.includes('diagnosis')) {
+    return 'I can provide informational guidance only. For a formal diagnosis, please consult a qualified dermatologist.';
+  }
+  return 'This assistant can help explain your scan results, identify next steps, and offer photo capture tips. Try a quick action above or ask a specific question.';
+}
+
+function setBodyMapView(view) {
+  state.bodyMapView = view;
+  document.querySelectorAll('.toggle-button').forEach(btn => btn.classList.toggle('active', btn.dataset.view === view));
+  renderBodyMap();
+}
+
+function setBodyMapFilter(filter) {
+  state.bodyMapFilter = filter;
+  document.querySelectorAll('.chip').forEach(chip => chip.classList.toggle('active', chip.dataset.filter === filter));
+  renderBodyMap();
+}
+
+function renderBodyMap() {
+  const container = document.getElementById('bodymap-figure');
+  if (!container) return;
+  container.innerHTML = '';
+  const filteredMarkers = bodyMapMarkers.filter(marker => marker.side === state.bodyMapView && (state.bodyMapFilter === 'all' || marker.category === state.bodyMapFilter));
+  filteredMarkers.forEach(marker => {
+    const item = document.createElement('button');
+    item.type = 'button';
+    item.className = `bodymap-marker ${marker.category}`;
+    item.style.top = marker.top;
+    item.style.left = marker.left;
+    item.title = `${marker.label} — ${marker.category.replace(/([A-Z])/g, ' $1')}`;
+    item.innerHTML = '<span></span>';
+    container.appendChild(item);
+  });
+}
+
+function initializeAssistant() {
+  if (state.assistantMessages.length === 0) {
+    state.assistantMessages = [
+      { sender: 'assistant', text: 'Hi! I am PocketDerm Assist. Ask me about your scan, skin changes, or best photo capture practices.' },
+    ];
+  }
+  renderAssistantMessages();
+}
+
+function updateScreenDependencies(screenId) {
   if (screenId === 'history') renderHistory();
   if (screenId === 'dermatologist') renderDermReports();
+  if (screenId === 'profile') renderProfile();
+  if (screenId === 'assistant') initializeAssistant();
+  if (screenId === 'bodymap') renderBodyMap();
+}
+
+function navigateTo(screenId) {
+  const isAuthScreen = screenId === 'login' || screenId === 'signup';
+  if (!state.currentUser && !isAuthScreen) screenId = 'login';
+
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+
+  const screen = document.getElementById('screen-' + screenId);
+  if (screen) screen.classList.add('active');
+  const navTab = document.querySelector(`[data-screen="${screenId}"]`);
+  if (navTab) navTab.classList.add('active');
+
+  updateScreenDependencies(screenId);
 }
 
 document.querySelectorAll('.nav-tab').forEach(tab => {
@@ -223,6 +513,12 @@ function generateMockResult() {
     notes,
     imageDataURL: state.currentImageDataURL,
     segPoints: generateSegPoints(),
+    bedrockMetrics: {
+      estimatedAreaMm2: 4 + Math.random() * 9,
+      borderRegularity: pick.risk === 'low' ? 'Regular' : pick.risk === 'moderate' ? 'Mildly Irregular' : 'Irregular',
+      symmetryScore: pick.risk === 'low' ? 0.91 : pick.risk === 'moderate' ? 0.74 : 0.52,
+      colorUniformity: pick.risk === 'low' ? 'Uniform' : pick.risk === 'moderate' ? 'Mild variation' : 'Multi-tonal',
+    },
   };
 }
 
@@ -414,7 +710,7 @@ function renderHistory() {
 
   empty.classList.add('hidden');
   list.innerHTML = state.scanHistory.map(item => `
-    <div class="history-item">
+    <div class="history-item" onclick="showHistoryDetails('${item.id}')">
       <img class="history-thumb" src="${item.imageDataURL}" alt="Mole scan" />
       <div class="history-info">
         <h4>${item.label}</h4>
@@ -428,6 +724,47 @@ function renderHistory() {
       </div>
     </div>
   `).join('');
+  renderHistoryDetails();
+}
+
+function showHistoryDetails(id) {
+  state.selectedHistoryId = id;
+  renderHistoryDetails();
+}
+
+function renderHistoryDetails() {
+  const detail = document.getElementById('history-detail');
+  if (!detail) return;
+  const item = state.scanHistory.find(entry => `${entry.id}` === `${state.selectedHistoryId}`);
+  if (!item) {
+    detail.classList.add('hidden');
+    detail.innerHTML = '';
+    return;
+  }
+
+  detail.classList.remove('hidden');
+  const area = item.bedrockMetrics?.estimatedAreaMm2 ? `${item.bedrockMetrics.estimatedAreaMm2.toFixed(1)} mm²` : 'Unknown';
+  detail.innerHTML = `
+    <div class="history-detail-card">
+      <div class="history-detail-grid">
+        <div class="history-detail-image">
+          <img src="${item.imageDataURL}" alt="Selected mole scan" />
+        </div>
+        <div class="history-detail-meta">
+          <h3>Suspected mole name: ${item.label}</h3>
+          <div class="history-date">${item.date} · ${item.time}</div>
+          <div class="history-location">📍 ${item.location}</div>
+          <div class="history-location">Risk: <strong>${item.risk.toUpperCase()}</strong></div>
+          <div class="history-location">Confidence: <strong>${Math.round(item.confidence * 100)}%</strong></div>
+          <div class="history-location">Area: <strong>${area}</strong></div>
+          ${item.notes ? `<div class="history-location">📝 ${item.notes}</div>` : ''}
+          <div class="history-detail-description">${item.description || 'No additional description available.'}</div>
+          <div class="history-detail-description">${item.explanation || ''}</div>
+          <button class="btn-secondary" onclick="navigateTo('scan')">New Scan</button>
+        </div>
+      </div>
+    </div>
+  `;
 }
 
 // ─── Dermatologist Reports ────────────────────────────────────────────────────
@@ -524,6 +861,21 @@ function downloadReport(id) {
   };
   state.scanHistory.push(demo);
 })();
+
+function initializeApp() {
+  loadCurrentUser();
+  if (state.currentUser) {
+    renderProfile();
+    setBodyMapView(state.bodyMapView);
+    setBodyMapFilter(state.bodyMapFilter);
+    initializeAssistant();
+    navigateTo('home');
+  } else {
+    navigateTo('login');
+  }
+}
+
+initializeApp();
 
 function generatePlaceholderImage(color) {
   const canvas = document.createElement('canvas');

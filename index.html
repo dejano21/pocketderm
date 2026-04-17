@@ -24,10 +24,12 @@
       <button class="nav-tab active" data-screen="home">Home</button>
       <button class="nav-tab" data-screen="scan">New Scan</button>
       <button class="nav-tab" data-screen="history">History</button>
-      <button class="nav-tab" data-screen="dermatologist">Dermatologist</button>
+      <button class="nav-tab" data-screen="bodymap">Body Map</button>
+      <button class="nav-tab" data-screen="assistant">Assistant</button>
+      <button class="nav-tab" data-screen="profile">Profile</button>
     </div>
     <div class="nav-profile">
-      <div class="avatar">JD</div>
+      <div class="avatar" id="nav-user">JD</div>
     </div>
   </nav>
 
@@ -245,6 +247,7 @@
         <div id="history-list" class="history-list">
           <!-- populated by JS -->
         </div>
+        <div id="history-detail" class="history-detail hidden"></div>
         <div id="history-empty" class="history-empty hidden">
           <div class="empty-icon">🔍</div>
           <h3>No scans yet</h3>
@@ -282,6 +285,153 @@
             <h3>No reports yet</h3>
             <p>Complete a scan to generate a clinical summary for your dermatologist.</p>
           </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="screen-bodymap" class="screen">
+      <div class="bodymap-container">
+        <div class="bodymap-header">
+          <h2>Body Map Visualization</h2>
+          <p>Review your scanned areas and identify spots by risk category.</p>
+        </div>
+        <div class="bodymap-controls">
+          <div class="toggle-group">
+            <button class="toggle-button active" data-view="front" onclick="setBodyMapView('front')">Front</button>
+            <button class="toggle-button" data-view="back" onclick="setBodyMapView('back')">Back</button>
+          </div>
+          <div class="filter-chips" id="bodymap-filters">
+            <button class="chip active" data-filter="all" onclick="setBodyMapFilter('all')">All</button>
+            <button class="chip" data-filter="low" onclick="setBodyMapFilter('low')">Low Risk</button>
+            <button class="chip" data-filter="review" onclick="setBodyMapFilter('review')">Review</button>
+            <button class="chip" data-filter="high" onclick="setBodyMapFilter('high')">High Risk</button>
+          </div>
+        </div>
+
+        <div class="bodymap-grid">
+          <div class="bodymap-visual">
+            <div class="bodymap-figure" id="bodymap-figure"></div>
+          </div>
+          <div class="bodymap-legend">
+            <h3>Legend</h3>
+            <div class="legend-item"><span class="legend-dot green"></span>Low Risk</div>
+            <div class="legend-item"><span class="legend-dot blue"></span>Congenital</div>
+            <div class="legend-item"><span class="legend-dot purple"></span>Blue Nevus</div>
+            <div class="legend-item"><span class="legend-dot orange"></span>Review</div>
+            <div class="legend-item"><span class="legend-dot red"></span>High Risk</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="screen-assistant" class="screen">
+      <div class="assistant-container">
+        <div class="assistant-header">
+          <h2>GenAI Assistant</h2>
+          <p>Ask PocketDerm for guidance, scan insights, and photo tips.</p>
+        </div>
+
+        <div class="assistant-card">
+          <div class="assistant-banner">Informational use only. This assistant does not provide medical diagnosis.</div>
+          <div class="assistant-messages" id="assistant-messages"></div>
+          <div class="assistant-quick-actions">
+            <button class="quick-action" onclick="handleAssistantSend('What does my result mean?')">What does my result mean?</button>
+            <button class="quick-action" onclick="handleAssistantSend('Should I book a dermatologist?')">Should I book a dermatologist?</button>
+            <button class="quick-action" onclick="handleAssistantSend('How do I take a better photo?')">How do I take a better photo?</button>
+            <button class="quick-action" onclick="handleAssistantSend('What is the ABCDE rule?')">What is the ABCDE rule?</button>
+          </div>
+          <div class="assistant-input-row">
+            <input id="assistant-input" type="text" placeholder="Type your question..." />
+            <button class="btn-primary" onclick="handleAssistantSend()">Send</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="screen-profile" class="screen">
+      <div class="profile-container">
+        <div class="profile-header">
+          <h2>Profile & Settings</h2>
+          <p>Keep your account up to date and manage connected dermatologist preferences.</p>
+        </div>
+
+        <div class="profile-grid">
+          <div class="profile-card">
+            <div class="profile-top-row">
+              <div class="profile-avatar-large" id="profile-avatar">JD</div>
+              <div>
+                <h3 id="profile-name">Jordan Doe</h3>
+                <p id="profile-email">jordan@example.com</p>
+              </div>
+            </div>
+            <div class="profile-details">
+              <div><span>Age</span><strong id="profile-age">32</strong></div>
+              <div><span>Skin type</span><strong id="profile-skin-type">Oily</strong></div>
+            </div>
+          </div>
+
+          <div class="connected-card">
+            <div class="connected-title">Connected Dermatologist</div>
+            <div class="connected-info">
+              <strong id="derm-name">Dr. Rebecca Chen</strong>
+              <span id="derm-clinic">Renew Skin Clinic</span>
+              <span id="derm-last-visit">Last visit: March 14, 2026</span>
+              <span class="status-pill connected">Connected</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="settings-section">
+          <h3>Notifications</h3>
+          <label class="toggle-row"><span>Push notifications</span><input id="toggle-push" type="checkbox" onchange="updateNotificationSetting('pushNotifications', this.checked)" /></label>
+          <label class="toggle-row"><span>Monthly check-up reminders</span><input id="toggle-monthly" type="checkbox" onchange="updateNotificationSetting('monthlyReminders', this.checked)" /></label>
+        </div>
+
+        <div class="privacy-section">
+          <div class="privacy-header">
+            <div>
+              <h3>Privacy & Legal</h3>
+              <p>Manage your account policies and learn more about how PocketDerm handles your data.</p>
+            </div>
+          </div>
+          <div class="privacy-list">
+            <button class="privacy-item" type="button">
+              <span>Privacy Policy</span>
+              <span class="privacy-arrow">›</span>
+            </button>
+            <button class="privacy-item" type="button">
+              <span>Data & Consent</span>
+              <span class="privacy-arrow">›</span>
+            </button>
+            <button class="privacy-item" type="button">
+              <span>Terms of Service</span>
+              <span class="privacy-arrow">›</span>
+            </button>
+            <button class="privacy-item" type="button">
+              <span>About</span>
+              <span class="privacy-arrow">›</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="logout-row">
+          <button class="btn-secondary" onclick="logout()">Logout</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="screen-login" class="screen">
+      <div class="auth-container">
+        <div class="auth-card">
+          <h2>Sign in to PocketDerm</h2>
+          <p>Enter any username and password to continue to the app.</p>
+          <form id="login-form" onsubmit="event.preventDefault(); loginUser()">
+            <label>Username</label>
+            <input id="login-username" type="text" placeholder="Username" required />
+            <label>Password</label>
+            <input id="login-password" type="password" placeholder="Password" required />
+            <button class="btn-primary" type="submit">Login</button>
+          </form>
         </div>
       </div>
     </section>
