@@ -4,7 +4,7 @@ export default function Logo({ size = 36 }) {
       src="/logo.svg"
       alt="Derma Pocket"
       width={size}
-      height={size * (90 / 80)}
+      height={size * (110 / 100)}
       style={{ display: "block" }}
     />
   );

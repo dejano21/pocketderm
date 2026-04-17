@@ -1,7 +1,22 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 90">
-  <line x1="18" y1="8" x2="18" y2="82" stroke="#1e293b" stroke-width="8" stroke-linecap="round"/>
-  <path d="M18 8 L48 8 Q62 8 62 22 L62 38" fill="none" stroke="#1e293b" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
-  <path d="M18 82 L40 82 Q62 82 62 60 L62 50" fill="none" stroke="#1e293b" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
-  <line x1="18" y1="45" x2="62" y2="45" stroke="#1e293b" stroke-width="8" stroke-linecap="round"/>
-  <circle cx="38" cy="66" r="4" fill="#C4908A"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 110">
+  <defs>
+    <linearGradient id="logoGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#14b8a6"/>
+      <stop offset="100%" stop-color="#1d4ed8"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Shield outline -->
+  <path d="M50 5 L12 22 Q8 24 8 28 L8 50 Q8 78 50 102 Q92 78 92 50 L92 28 Q92 24 88 22 Z"
+    fill="none" stroke="url(#logoGrad)" stroke-width="5" stroke-linejoin="round"/>
+
+  <!-- Face profile inside shield -->
+  <path d="M42 28 Q44 24 48 24 Q54 22 56 26 Q58 30 56 34 Q54 36 52 37
+           Q56 38 58 42 Q60 46 58 50 Q56 54 52 56
+           Q48 58 44 62 Q40 66 38 72 Q36 76 38 78"
+    fill="none" stroke="url(#logoGrad)" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <!-- Magnifying glass -->
+  <circle cx="60" cy="48" r="12" fill="none" stroke="url(#logoGrad)" stroke-width="3.5"/>
+  <line x1="69" y1="57" x2="80" y2="68" stroke="url(#logoGrad)" stroke-width="4.5" stroke-linecap="round"/>
 </svg>
