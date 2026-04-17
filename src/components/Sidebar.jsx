@@ -37,7 +37,7 @@ export default function Sidebar() {
           padding: "0 20px", marginBottom: 32, cursor: "pointer",
         }}
       >
-        <Logo size={34} />
+        <Logo size={48} />
         <span style={{ fontSize: 18, fontWeight: 800, color: "var(--text)" }}>Derma Pocket</span>
       </div>
 
