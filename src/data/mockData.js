@@ -19,13 +19,32 @@ export const dashboardStats = {
   nextCheckup: "2026-05-10",
 };
 
+// Clinical classification types based on dermatological standards
+export const classificationTypes = {
+  common: { label: "Common Mole", description: "Benign nevus — uniform color, round/oval shape, <6mm" },
+  atypical: { label: "Atypical Mole", description: "Dysplastic nevus — irregular shape or mixed coloring" },
+  congenital: { label: "Congenital Mole", description: "Present at birth — varies in size, monitor for changes" },
+  spitz: { label: "Spitz Nevus", description: "Dome-shaped, pink/brown — often benign but can mimic melanoma" },
+  blue: { label: "Blue Nevus", description: "Blue-gray coloring from deep melanin — usually benign" },
+  suspicious: { label: "Suspicious Lesion", description: "Requires further clinical evaluation" },
+};
+
 export const moleHistory = [
   {
     id: "m1",
     name: "Left Forearm",
+    classification: "common",
     scans: [
-      { date: "2026-04-10", status: "Low Risk", confidence: 92, notes: "No visible changes" },
-      { date: "2026-03-08", status: "Low Risk", confidence: 90, notes: "Baseline scan" },
+      {
+        date: "2026-04-10", status: "Low Risk", confidence: 92,
+        diameterMm: 4.2, areaMm2: 13.9,
+        notes: "No visible changes",
+      },
+      {
+        date: "2026-03-08", status: "Low Risk", confidence: 90,
+        diameterMm: 4.1, areaMm2: 13.2,
+        notes: "Baseline scan",
+      },
     ],
     trend: "No major visible changes",
     trendType: "stable",
@@ -33,19 +52,38 @@ export const moleHistory = [
   {
     id: "m2",
     name: "Upper Back",
+    classification: "atypical",
+    previousClassification: "common",
     scans: [
-      { date: "2026-04-05", status: "Needs Review", confidence: 74, notes: "Slight asymmetry detected" },
-      { date: "2026-02-20", status: "Low Risk", confidence: 88, notes: "Initial scan" },
+      {
+        date: "2026-04-05", status: "Needs Review", confidence: 74,
+        diameterMm: 6.8, areaMm2: 36.3,
+        notes: "Slight asymmetry detected — irregular border emerging",
+      },
+      {
+        date: "2026-02-20", status: "Low Risk", confidence: 88,
+        diameterMm: 5.5, areaMm2: 23.8,
+        notes: "Initial scan — uniform appearance",
+      },
     ],
-    trend: "Slight change detected",
-    trendType: "change",
+    trend: "Significant growth detected (+52.5% area)",
+    trendType: "alert",
   },
   {
     id: "m3",
     name: "Right Shoulder",
+    classification: "congenital",
     scans: [
-      { date: "2026-03-28", status: "Low Risk", confidence: 95, notes: "Stable appearance" },
-      { date: "2026-01-15", status: "Low Risk", confidence: 93, notes: "Baseline scan" },
+      {
+        date: "2026-03-28", status: "Low Risk", confidence: 95,
+        diameterMm: 7.0, areaMm2: 38.5,
+        notes: "Stable appearance — consistent with congenital nevus",
+      },
+      {
+        date: "2026-01-15", status: "Low Risk", confidence: 93,
+        diameterMm: 6.9, areaMm2: 37.4,
+        notes: "Baseline scan",
+      },
     ],
     trend: "No major visible changes",
     trendType: "stable",
@@ -53,26 +91,54 @@ export const moleHistory = [
   {
     id: "m4",
     name: "Left Calf",
+    classification: "suspicious",
+    previousClassification: "atypical",
     scans: [
-      { date: "2026-03-15", status: "High Priority Review Recommended", confidence: 62, notes: "Irregular border noted" },
+      {
+        date: "2026-03-15", status: "High Priority Review Recommended", confidence: 62,
+        diameterMm: 8.3, areaMm2: 54.1,
+        notes: "Irregular border, asymmetric shape, mixed coloring noted",
+      },
     ],
-    trend: "New entry — monitoring recommended",
+    trend: "New entry — clinical evaluation recommended",
     trendType: "alert",
   },
   {
     id: "m5",
     name: "Chest",
+    classification: "blue",
     scans: [
-      { date: "2026-02-28", status: "Low Risk", confidence: 91, notes: "Uniform coloring" },
+      {
+        date: "2026-02-28", status: "Low Risk", confidence: 91,
+        diameterMm: 3.8, areaMm2: 11.3,
+        notes: "Blue-gray coloring, well-defined borders — consistent with blue nevus",
+      },
     ],
     trend: "No major visible changes",
     trendType: "stable",
   },
 ];
 
+// Helper: compute area growth % between two scans (latest vs previous)
+export function getAreaGrowth(scans) {
+  if (scans.length < 2) return null;
+  const current = scans[0].areaMm2;
+  const previous = scans[1].areaMm2;
+  if (!previous) return null;
+  return ((current - previous) / previous) * 100;
+}
+
+// Helper: check if classification changed (benign → suspicious transition)
+export function hasClassificationEscalation(mole) {
+  return !!mole.previousClassification;
+}
+
 export const mockAnalysisResult = {
   classification: "Low Risk",
   confidence: 92,
+  clinicalType: "common",
+  diameterMm: 4.2,
+  areaMm2: 13.9,
   explanation:
     "The analyzed region shows a symmetrical shape with uniform coloring and well-defined borders. These characteristics are generally associated with benign skin lesions. No immediate concern detected based on visual analysis.",
   recommendations: [
@@ -115,15 +181,15 @@ export const dermatologistSummary = {
   totalScans: 8,
   monitoredMoles: 5,
   riskFlags: [
-    { mole: "Upper Back", flag: "Needs Review", detail: "Slight asymmetry detected in latest scan" },
-    { mole: "Left Calf", flag: "High Priority", detail: "Irregular border noted — recommend clinical evaluation" },
+    { mole: "Upper Back", flag: "Needs Review", detail: "Classification escalated from Common → Atypical. Area increased 52.5% (23.8 → 36.3 mm²)" },
+    { mole: "Left Calf", flag: "High Priority", detail: "Classified as Suspicious Lesion. Irregular border, asymmetric shape — recommend clinical evaluation" },
   ],
   timeline: [
-    { date: "2026-04-10", event: "Left Forearm scanned — Low Risk" },
-    { date: "2026-04-05", event: "Upper Back scanned — Needs Review" },
-    { date: "2026-03-28", event: "Right Shoulder scanned — Low Risk" },
-    { date: "2026-03-15", event: "Left Calf scanned — High Priority Review" },
-    { date: "2026-02-28", event: "Chest scanned — Low Risk" },
+    { date: "2026-04-10", event: "Left Forearm scanned — Low Risk (4.2mm, 13.9 mm²)" },
+    { date: "2026-04-05", event: "Upper Back scanned — Needs Review (6.8mm, 36.3 mm²)" },
+    { date: "2026-03-28", event: "Right Shoulder scanned — Low Risk (7.0mm, 38.5 mm²)" },
+    { date: "2026-03-15", event: "Left Calf scanned — High Priority Review (8.3mm, 54.1 mm²)" },
+    { date: "2026-02-28", event: "Chest scanned — Low Risk (3.8mm, 11.3 mm²)" },
   ],
-  notes: "Patient has been consistently monitoring 5 moles over the past 3 months. Two areas flagged for further review. Recommend in-person evaluation for left calf lesion.",
+  notes: "Patient has been consistently monitoring 5 moles over the past 3 months. Two areas flagged for further review. Upper Back shows significant area growth (+52.5%) and classification escalation (Common → Atypical). Left Calf classified as Suspicious Lesion — recommend in-person evaluation.",
 };

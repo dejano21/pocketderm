@@ -1,12 +1,13 @@
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Clock, Share2, MessageCircle, ShieldCheck, AlertTriangle, Info } from "lucide-react";
-import { mockAnalysisResult } from "../data/mockData";
+import { ArrowLeft, Clock, Share2, MessageCircle, ShieldCheck, AlertTriangle, Info, Ruler, Circle } from "lucide-react";
+import { mockAnalysisResult, classificationTypes } from "../data/mockData";
 import StatusBadge from "../components/StatusBadge";
 import MolePlaceholder from "../components/MolePlaceholder";
 
 export default function AnalysisResults() {
   const navigate = useNavigate();
   const r = mockAnalysisResult;
+  const cls = classificationTypes[r.clinicalType];
 
   return (
     <div className="screen" style={{ paddingTop: 12 }}>
@@ -49,6 +50,37 @@ export default function AnalysisResults() {
               The dashed outline on the image highlights the detected mole region used for analysis.
             </p>
           </div>
+        </div>
+      </div>
+
+      {/* Measurements + Clinical Classification */}
+      <div className="grid-cards" style={{ marginBottom: 16 }}>
+        <div className="card">
+          <p style={{ fontSize: 12, color: "var(--text-muted)", marginBottom: 10 }}>Measurements</p>
+          <div style={{ display: "flex", gap: 16 }}>
+            <div style={{ flex: 1, textAlign: "center", padding: "12px 0", background: "#f8fafc", borderRadius: "var(--radius-sm)" }}>
+              <Ruler size={18} color="var(--primary)" style={{ marginBottom: 4 }} />
+              <p style={{ fontSize: 20, fontWeight: 700 }}>{r.diameterMm}</p>
+              <p style={{ fontSize: 11, color: "var(--text-muted)" }}>Diameter (mm)</p>
+            </div>
+            <div style={{ flex: 1, textAlign: "center", padding: "12px 0", background: "#f8fafc", borderRadius: "var(--radius-sm)" }}>
+              <Circle size={18} color="var(--primary)" style={{ marginBottom: 4 }} />
+              <p style={{ fontSize: 20, fontWeight: 700 }}>{r.areaMm2}</p>
+              <p style={{ fontSize: 11, color: "var(--text-muted)" }}>Area (mm²)</p>
+            </div>
+          </div>
+        </div>
+        <div className="card">
+          <p style={{ fontSize: 12, color: "var(--text-muted)", marginBottom: 8 }}>Clinical Classification</p>
+          <span style={{
+            display: "inline-block", padding: "4px 12px", borderRadius: 14,
+            fontSize: 13, fontWeight: 700,
+            background: "var(--success-light)", color: "#059669",
+            marginBottom: 8,
+          }}>
+            {cls.label}
+          </span>
+          <p style={{ fontSize: 12, color: "var(--text-secondary)", lineHeight: 1.5 }}>{cls.description}</p>
         </div>
       </div>
 
