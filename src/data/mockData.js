@@ -19,7 +19,6 @@ export const dashboardStats = {
   nextCheckup: "2026-05-10",
 };
 
-// Clinical classification types based on dermatological standards
 export const classificationTypes = {
   common: { label: "Common Mole", description: "Benign nevus — uniform color, round/oval shape, <6mm" },
   atypical: { label: "Atypical Mole", description: "Dysplastic nevus — irregular shape or mixed coloring" },
@@ -29,22 +28,17 @@ export const classificationTypes = {
   suspicious: { label: "Suspicious Lesion", description: "Requires further clinical evaluation" },
 };
 
+// Normalized body coordinates: x/y as % of body map (0-100)
+// view: "front" or "back"
 export const moleHistory = [
   {
     id: "m1",
     name: "Left Forearm",
     classification: "common",
+    bodyPosition: { x: 22, y: 52, view: "front" },
     scans: [
-      {
-        date: "2026-04-10", status: "Low Risk", confidence: 92,
-        diameterMm: 4.2, areaMm2: 13.9,
-        notes: "No visible changes",
-      },
-      {
-        date: "2026-03-08", status: "Low Risk", confidence: 90,
-        diameterMm: 4.1, areaMm2: 13.2,
-        notes: "Baseline scan",
-      },
+      { date: "2026-04-10", status: "Low Risk", confidence: 92, diameterMm: 4.2, areaMm2: 13.9, notes: "No visible changes" },
+      { date: "2026-03-08", status: "Low Risk", confidence: 90, diameterMm: 4.1, areaMm2: 13.2, notes: "Baseline scan" },
     ],
     trend: "No major visible changes",
     trendType: "stable",
@@ -54,17 +48,10 @@ export const moleHistory = [
     name: "Upper Back",
     classification: "atypical",
     previousClassification: "common",
+    bodyPosition: { x: 55, y: 30, view: "back" },
     scans: [
-      {
-        date: "2026-04-05", status: "Needs Review", confidence: 74,
-        diameterMm: 6.8, areaMm2: 36.3,
-        notes: "Slight asymmetry detected — irregular border emerging",
-      },
-      {
-        date: "2026-02-20", status: "Low Risk", confidence: 88,
-        diameterMm: 5.5, areaMm2: 23.8,
-        notes: "Initial scan — uniform appearance",
-      },
+      { date: "2026-04-05", status: "Needs Review", confidence: 74, diameterMm: 6.8, areaMm2: 36.3, notes: "Slight asymmetry detected — irregular border emerging" },
+      { date: "2026-02-20", status: "Low Risk", confidence: 88, diameterMm: 5.5, areaMm2: 23.8, notes: "Initial scan — uniform appearance" },
     ],
     trend: "Significant growth detected (+52.5% area)",
     trendType: "alert",
@@ -73,17 +60,10 @@ export const moleHistory = [
     id: "m3",
     name: "Right Shoulder",
     classification: "congenital",
+    bodyPosition: { x: 70, y: 24, view: "front" },
     scans: [
-      {
-        date: "2026-03-28", status: "Low Risk", confidence: 95,
-        diameterMm: 7.0, areaMm2: 38.5,
-        notes: "Stable appearance — consistent with congenital nevus",
-      },
-      {
-        date: "2026-01-15", status: "Low Risk", confidence: 93,
-        diameterMm: 6.9, areaMm2: 37.4,
-        notes: "Baseline scan",
-      },
+      { date: "2026-03-28", status: "Low Risk", confidence: 95, diameterMm: 7.0, areaMm2: 38.5, notes: "Stable appearance — consistent with congenital nevus" },
+      { date: "2026-01-15", status: "Low Risk", confidence: 93, diameterMm: 6.9, areaMm2: 37.4, notes: "Baseline scan" },
     ],
     trend: "No major visible changes",
     trendType: "stable",
@@ -93,12 +73,9 @@ export const moleHistory = [
     name: "Left Calf",
     classification: "suspicious",
     previousClassification: "atypical",
+    bodyPosition: { x: 40, y: 82, view: "front" },
     scans: [
-      {
-        date: "2026-03-15", status: "High Priority Review Recommended", confidence: 62,
-        diameterMm: 8.3, areaMm2: 54.1,
-        notes: "Irregular border, asymmetric shape, mixed coloring noted",
-      },
+      { date: "2026-03-15", status: "High Priority Review Recommended", confidence: 62, diameterMm: 8.3, areaMm2: 54.1, notes: "Irregular border, asymmetric shape, mixed coloring noted" },
     ],
     trend: "New entry — clinical evaluation recommended",
     trendType: "alert",
@@ -107,19 +84,15 @@ export const moleHistory = [
     id: "m5",
     name: "Chest",
     classification: "blue",
+    bodyPosition: { x: 48, y: 32, view: "front" },
     scans: [
-      {
-        date: "2026-02-28", status: "Low Risk", confidence: 91,
-        diameterMm: 3.8, areaMm2: 11.3,
-        notes: "Blue-gray coloring, well-defined borders — consistent with blue nevus",
-      },
+      { date: "2026-02-28", status: "Low Risk", confidence: 91, diameterMm: 3.8, areaMm2: 11.3, notes: "Blue-gray coloring, well-defined borders — consistent with blue nevus" },
     ],
     trend: "No major visible changes",
     trendType: "stable",
   },
 ];
 
-// Helper: compute area growth % between two scans (latest vs previous)
 export function getAreaGrowth(scans) {
   if (scans.length < 2) return null;
   const current = scans[0].areaMm2;
@@ -128,7 +101,6 @@ export function getAreaGrowth(scans) {
   return ((current - previous) / previous) * 100;
 }
 
-// Helper: check if classification changed (benign → suspicious transition)
 export function hasClassificationEscalation(mole) {
   return !!mole.previousClassification;
 }
@@ -152,7 +124,7 @@ export const genAConversation = [
   {
     id: 1,
     role: "assistant",
-    text: "Hi! I'm GenA, your Pocket-Derm assistant. I can help explain your scan results, answer general skin health questions, and guide you through the app. How can I help today?",
+    text: "Hi! I'm GenA, your Pocket Derm assistant. I can help explain your scan results, answer general skin health questions, and guide you through the app. How can I help today?",
   },
 ];
 
@@ -167,7 +139,7 @@ export const genAResponses = {
   "What does my result mean?":
     'Your most recent scan was classified as "Low Risk" with 92% confidence. This means the visual characteristics of the mole — including its shape, color, and borders — appear consistent with benign skin features. However, this is an informational assessment only and not a medical diagnosis. Regular monitoring and professional check-ups are always recommended.',
   "Should I book a dermatologist?":
-    "Based on your current scan history, there's no urgent need for an immediate appointment. That said, it's always a good idea to have an annual skin check with a dermatologist, especially if you have a family history of skin cancer or notice any changes. You can share your Pocket-Derm summary with your connected dermatologist anytime.",
+    "Based on your current scan history, there's no urgent need for an immediate appointment. That said, it's always a good idea to have an annual skin check with a dermatologist, especially if you have a family history of skin cancer or notice any changes. You can share your Pocket Derm summary with your connected dermatologist anytime.",
   "How do I take a better photo?":
     "Great question! For the best results: use natural daylight or a well-lit room, hold your phone about 10–15 cm from the mole, make sure the mole is centered and in focus, avoid shadows or flash glare, and keep the background clean. Consistent photo conditions help with accurate comparisons over time.",
   "What is the ABCDE rule?":

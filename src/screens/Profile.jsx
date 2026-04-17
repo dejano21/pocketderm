@@ -110,14 +110,14 @@ export default function Profile() {
             <SettingRow icon={Lock} label="Privacy Policy" />
             <SettingRow icon={Shield} label="Data & Consent" />
             <SettingRow icon={FileText} label="Terms of Service" />
-            <SettingRow icon={Info} label="About Pocket-Derm" />
+            <SettingRow icon={Info} label="About Pocket Derm" />
           </div>
         </div>
       </div>
 
       {/* Disclaimer */}
       <div className="disclaimer" style={{ marginBottom: 20, maxWidth: 600 }}>
-        Pocket-Derm is a monitoring and informational tool only. It does not provide medical diagnoses.
+        Pocket Derm is a monitoring and informational tool only. It does not provide medical diagnoses.
         Always consult a qualified healthcare professional for clinical evaluation and treatment decisions.
         Your data is stored locally on this device for this prototype.
       </div>

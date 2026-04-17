@@ -33,7 +33,7 @@ export default function Onboarding() {
       </div>
 
       <h1 style={{ fontSize: 32, fontWeight: 800, marginBottom: 8, color: "var(--text)" }}>
-        Pocket-Derm
+        Pocket Derm
       </h1>
       <p style={{ fontSize: 17, color: "var(--text-secondary)", maxWidth: 420, lineHeight: 1.5, marginBottom: 40 }}>
         Monitor suspicious moles over time. Stay informed. Stay ahead.

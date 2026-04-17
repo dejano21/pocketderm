@@ -1,6 +1,6 @@
-# Pocket-Derm — Mobile App Prototype
+# Pocket Derm — Mobile & Desktop App Prototype
 
-A frontend-only prototype for a mobile app that helps users photograph and monitor suspicious moles over time. Built for demo/pitch purposes with mock data throughout.
+A frontend-only prototype for an app that helps users photograph and monitor suspicious moles over time. Built for demo/pitch purposes with mock data throughout. Features an interactive body map, clinical classifications, area measurements, and responsive desktop layout.
 
 ## Quick Start
 

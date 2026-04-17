@@ -44,7 +44,7 @@ export default function Sidebar() {
         }}>
           <Shield size={20} color="white" />
         </div>
-        <span style={{ fontSize: 18, fontWeight: 800, color: "var(--text)" }}>Pocket-Derm</span>
+        <span style={{ fontSize: 18, fontWeight: 800, color: "var(--text)" }}>Pocket Derm</span>
       </div>
 
       {/* Nav links */}
@@ -81,7 +81,7 @@ export default function Sidebar() {
           padding: "12px 14px", borderRadius: "var(--radius-sm)",
           background: "#f1f5f9", fontSize: 11, color: "var(--text-muted)", lineHeight: 1.5,
         }}>
-          Pocket-Derm Prototype<br />
+          Pocket Derm Prototype<br />
           For demo purposes only
         </div>
       </div>
