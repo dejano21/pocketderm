@@ -16,10 +16,10 @@ export default function Home() {
   return (
     <div className="screen">
       {/* Header */}
-      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 24, paddingTop: 8 }}>
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 28, paddingTop: 8 }}>
         <div>
           <p style={{ fontSize: 14, color: "var(--text-secondary)" }}>Welcome back,</p>
-          <h1 style={{ fontSize: 24, fontWeight: 700 }}>{userProfile.name.split(" ")[0]}</h1>
+          <h1 style={{ fontSize: 26, fontWeight: 700 }}>{userProfile.name.split(" ")[0]}</h1>
         </div>
         <div style={{
           width: 44, height: 44, borderRadius: "50%",
@@ -30,37 +30,40 @@ export default function Home() {
         </div>
       </div>
 
-      {/* Stats cards */}
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, marginBottom: 20 }}>
-        <div className="card">
-          <p style={{ fontSize: 12, color: "var(--text-muted)", marginBottom: 4 }}>Monitored Moles</p>
-          <p style={{ fontSize: 28, fontWeight: 700, color: "var(--primary)" }}>{dashboardStats.totalMoles}</p>
+      {/* Top row: stats + dermatologist */}
+      <div className="grid-cards" style={{ marginBottom: 24 }}>
+        {/* Stats */}
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+          <div className="card">
+            <p style={{ fontSize: 12, color: "var(--text-muted)", marginBottom: 4 }}>Monitored Moles</p>
+            <p style={{ fontSize: 28, fontWeight: 700, color: "var(--primary)" }}>{dashboardStats.totalMoles}</p>
+          </div>
+          <div className="card">
+            <p style={{ fontSize: 12, color: "var(--text-muted)", marginBottom: 4 }}>Last Scan</p>
+            <StatusBadge status={dashboardStats.recentScanStatus} />
+            <p style={{ fontSize: 11, color: "var(--text-muted)", marginTop: 4 }}>{dashboardStats.lastScanDate}</p>
+          </div>
         </div>
-        <div className="card">
-          <p style={{ fontSize: 12, color: "var(--text-muted)", marginBottom: 4 }}>Last Scan</p>
-          <StatusBadge status={dashboardStats.recentScanStatus} />
-          <p style={{ fontSize: 11, color: "var(--text-muted)", marginTop: 4 }}>{dashboardStats.lastScanDate}</p>
-        </div>
-      </div>
 
-      {/* Dermatologist connection */}
-      <div className="card" style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 20 }}>
-        <div style={{
-          width: 40, height: 40, borderRadius: "50%", background: "var(--success-light)",
-          display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0,
-        }}>
-          <FileText size={18} color="var(--success)" />
+        {/* Dermatologist connection */}
+        <div className="card" style={{ display: "flex", alignItems: "center", gap: 12 }}>
+          <div style={{
+            width: 40, height: 40, borderRadius: "50%", background: "var(--success-light)",
+            display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0,
+          }}>
+            <FileText size={18} color="var(--success)" />
+          </div>
+          <div style={{ flex: 1 }}>
+            <p style={{ fontSize: 14, fontWeight: 600 }}>{userProfile.dermatologist.name}</p>
+            <p style={{ fontSize: 12, color: "var(--text-muted)" }}>{userProfile.dermatologist.clinic}</p>
+          </div>
+          <span className="badge badge-success">Connected</span>
         </div>
-        <div style={{ flex: 1 }}>
-          <p style={{ fontSize: 14, fontWeight: 600 }}>{userProfile.dermatologist.name}</p>
-          <p style={{ fontSize: 12, color: "var(--text-muted)" }}>{userProfile.dermatologist.clinic}</p>
-        </div>
-        <span className="badge badge-success">Connected</span>
       </div>
 
       {/* Quick actions */}
       <p className="section-title">Quick Actions</p>
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, marginBottom: 24 }}>
+      <div className="grid-2 grid-2-to-4" style={{ marginBottom: 28 }}>
         {actions.map(({ icon: Icon, label, path, color }) => (
           <button
             key={path}
@@ -69,10 +72,12 @@ export default function Home() {
             style={{
               display: "flex", flexDirection: "column", alignItems: "center", gap: 8,
               cursor: "pointer", border: "1px solid var(--border)", padding: "20px 12px",
-              transition: "transform 0.15s", textAlign: "center",
+              transition: "transform 0.15s, box-shadow 0.15s", textAlign: "center",
             }}
             onMouseDown={e => e.currentTarget.style.transform = "scale(0.97)"}
             onMouseUp={e => e.currentTarget.style.transform = "scale(1)"}
+            onMouseEnter={e => e.currentTarget.style.boxShadow = "var(--shadow-md)"}
+            onMouseLeave={e => e.currentTarget.style.boxShadow = "var(--shadow)"}
           >
             <div style={{
               width: 44, height: 44, borderRadius: 12,
@@ -87,7 +92,13 @@ export default function Home() {
 
       {/* Reminder card */}
       <p className="section-title">Reminders</p>
-      <div className="card" style={{ display: "flex", alignItems: "center", gap: 12, background: "#eff6ff", border: "1px solid #bfdbfe" }}
+      <div
+        className="card"
+        style={{
+          display: "flex", alignItems: "center", gap: 12,
+          background: "#eff6ff", border: "1px solid #bfdbfe", cursor: "pointer",
+          maxWidth: 600,
+        }}
         onClick={() => navigate("/capture")}
       >
         <div style={{

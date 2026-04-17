@@ -1,5 +1,6 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import { Home, Camera, Clock, MessageCircle, User } from "lucide-react";
+import { useMediaQuery } from "../hooks/useMediaQuery";
 
 const tabs = [
   { path: "/home", icon: Home, label: "Home" },
@@ -12,15 +13,16 @@ const tabs = [
 export default function BottomNav() {
   const location = useLocation();
   const navigate = useNavigate();
+  const isDesktop = useMediaQuery("(min-width: 768px)");
+
+  if (isDesktop) return null;
 
   return (
     <nav style={{
       position: "fixed",
       bottom: 0,
-      left: "50%",
-      transform: "translateX(-50%)",
-      width: "100%",
-      maxWidth: 430,
+      left: 0,
+      right: 0,
       height: "var(--nav-height)",
       background: "white",
       borderTop: "1px solid var(--border)",

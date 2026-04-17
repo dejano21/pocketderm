@@ -24,44 +24,45 @@ export default function Onboarding() {
     }}>
       {/* Logo */}
       <div style={{
-        width: 72,
-        height: 72,
-        borderRadius: 20,
+        width: 72, height: 72, borderRadius: 20,
         background: "linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%)",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        marginBottom: 20,
-        boxShadow: "0 8px 24px rgba(8,145,178,0.25)",
+        display: "flex", alignItems: "center", justifyContent: "center",
+        marginBottom: 20, boxShadow: "0 8px 24px rgba(8,145,178,0.25)",
       }}>
         <Shield size={36} color="white" />
       </div>
 
-      <h1 style={{ fontSize: 28, fontWeight: 800, marginBottom: 8, color: "var(--text)" }}>
+      <h1 style={{ fontSize: 32, fontWeight: 800, marginBottom: 8, color: "var(--text)" }}>
         Pocket-Derm
       </h1>
-      <p style={{ fontSize: 16, color: "var(--text-secondary)", maxWidth: 300, lineHeight: 1.5, marginBottom: 36 }}>
+      <p style={{ fontSize: 17, color: "var(--text-secondary)", maxWidth: 420, lineHeight: 1.5, marginBottom: 40 }}>
         Monitor suspicious moles over time. Stay informed. Stay ahead.
       </p>
 
       {/* Feature cards */}
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, width: "100%", maxWidth: 340, marginBottom: 40 }}>
+      <div style={{
+        display: "grid",
+        gridTemplateColumns: "repeat(auto-fit, minmax(150px, 1fr))",
+        gap: 14, width: "100%", maxWidth: 640, marginBottom: 44,
+      }}>
         {features.map(({ icon: Icon, title, desc }) => (
-          <div key={title} className="card" style={{ textAlign: "left", padding: 14 }}>
-            <Icon size={20} color="var(--primary)" style={{ marginBottom: 8 }} />
-            <div style={{ fontSize: 14, fontWeight: 700, marginBottom: 4 }}>{title}</div>
-            <div style={{ fontSize: 12, color: "var(--text-secondary)", lineHeight: 1.4 }}>{desc}</div>
+          <div key={title} className="card" style={{ textAlign: "left", padding: 16 }}>
+            <Icon size={22} color="var(--primary)" style={{ marginBottom: 8 }} />
+            <div style={{ fontSize: 15, fontWeight: 700, marginBottom: 4 }}>{title}</div>
+            <div style={{ fontSize: 13, color: "var(--text-secondary)", lineHeight: 1.4 }}>{desc}</div>
           </div>
         ))}
       </div>
 
       {/* Buttons */}
-      <button className="btn btn-primary" style={{ maxWidth: 340, marginBottom: 12 }} onClick={() => navigate("/home")}>
-        Get Started
-      </button>
-      <button className="btn btn-ghost" style={{ maxWidth: 340 }} onClick={() => navigate("/home")}>
-        Log In
-      </button>
+      <div style={{ display: "flex", gap: 12, flexWrap: "wrap", justifyContent: "center" }}>
+        <button className="btn btn-primary" style={{ minWidth: 200 }} onClick={() => navigate("/home")}>
+          Get Started
+        </button>
+        <button className="btn btn-ghost" style={{ minWidth: 200 }} onClick={() => navigate("/home")}>
+          Log In
+        </button>
+      </div>
     </div>
   );
 }

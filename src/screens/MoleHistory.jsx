@@ -32,15 +32,17 @@ export default function MoleHistory() {
         {moleHistory.length} moles tracked · Tap for details
       </p>
 
-      <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+      <div className="grid-cards">
         {moleHistory.map((mole) => {
           const latest = mole.scans[0];
           return (
             <div
               key={mole.id}
               className="card"
-              style={{ display: "flex", gap: 14, alignItems: "center", cursor: "pointer" }}
+              style={{ display: "flex", gap: 14, alignItems: "center", cursor: "pointer", transition: "box-shadow 0.15s" }}
               onClick={() => navigate(`/history/${mole.id}`)}
+              onMouseEnter={e => e.currentTarget.style.boxShadow = "var(--shadow-md)"}
+              onMouseLeave={e => e.currentTarget.style.boxShadow = "var(--shadow)"}
             >
               <MolePlaceholder size={64} />
               <div style={{ flex: 1, minWidth: 0 }}>

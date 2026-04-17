@@ -49,67 +49,74 @@ export default function Profile() {
         <h1>Profile & Settings</h1>
       </div>
 
-      {/* User card */}
-      <div className="card" style={{ display: "flex", gap: 14, alignItems: "center", marginBottom: 20 }}>
-        <div style={{
-          width: 56, height: 56, borderRadius: "50%",
-          background: "linear-gradient(135deg, var(--primary), var(--accent))",
-          display: "flex", alignItems: "center", justifyContent: "center",
-        }}>
-          <User size={28} color="white" />
+      {/* Desktop: two-column top */}
+      <div className="grid-cards" style={{ marginBottom: 24 }}>
+        {/* User card */}
+        <div className="card" style={{ display: "flex", gap: 14, alignItems: "center" }}>
+          <div style={{
+            width: 56, height: 56, borderRadius: "50%",
+            background: "linear-gradient(135deg, var(--primary), var(--accent))",
+            display: "flex", alignItems: "center", justifyContent: "center",
+          }}>
+            <User size={28} color="white" />
+          </div>
+          <div>
+            <p style={{ fontSize: 17, fontWeight: 700 }}>{userProfile.name}</p>
+            <p style={{ fontSize: 13, color: "var(--text-muted)" }}>{userProfile.email}</p>
+            <p style={{ fontSize: 12, color: "var(--text-muted)" }}>
+              Age {userProfile.age} · {userProfile.skinType}
+            </p>
+          </div>
         </div>
+
+        {/* Dermatologist */}
+        <div className="card" style={{ display: "flex", gap: 12, alignItems: "center" }}>
+          <div style={{
+            width: 44, height: 44, borderRadius: "50%", background: "var(--success-light)",
+            display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0,
+          }}>
+            <Stethoscope size={20} color="var(--success)" />
+          </div>
+          <div style={{ flex: 1 }}>
+            <p style={{ fontSize: 14, fontWeight: 600 }}>{userProfile.dermatologist.name}</p>
+            <p style={{ fontSize: 12, color: "var(--text-muted)" }}>{userProfile.dermatologist.clinic}</p>
+            <p style={{ fontSize: 11, color: "var(--text-muted)" }}>Last visit: {userProfile.dermatologist.lastVisit}</p>
+          </div>
+          <span className="badge badge-success">Connected</span>
+        </div>
+      </div>
+
+      {/* Notifications + Privacy side by side on desktop */}
+      <div className="grid-cards" style={{ marginBottom: 24 }}>
         <div>
-          <p style={{ fontSize: 17, fontWeight: 700 }}>{userProfile.name}</p>
-          <p style={{ fontSize: 13, color: "var(--text-muted)" }}>{userProfile.email}</p>
-          <p style={{ fontSize: 12, color: "var(--text-muted)" }}>
-            Age {userProfile.age} · {userProfile.skinType}
-          </p>
+          <p className="section-title">Notifications</p>
+          <div className="card" style={{ padding: "4px 16px" }}>
+            <SettingRow
+              icon={Bell}
+              label="Push Notifications"
+              right={<Toggle on={notifications} onToggle={() => setNotifications(!notifications)} />}
+            />
+            <SettingRow
+              icon={BellOff}
+              label="Monthly Check-Up Reminder"
+              right={<Toggle on={monthlyReminder} onToggle={() => setMonthlyReminder(!monthlyReminder)} />}
+            />
+          </div>
         </div>
-      </div>
 
-      {/* Notifications */}
-      <p className="section-title">Notifications</p>
-      <div className="card" style={{ marginBottom: 20, padding: "4px 16px" }}>
-        <SettingRow
-          icon={Bell}
-          label="Push Notifications"
-          right={<Toggle on={notifications} onToggle={() => setNotifications(!notifications)} />}
-        />
-        <SettingRow
-          icon={BellOff}
-          label="Monthly Check-Up Reminder"
-          right={<Toggle on={monthlyReminder} onToggle={() => setMonthlyReminder(!monthlyReminder)} />}
-        />
-      </div>
-
-      {/* Dermatologist */}
-      <p className="section-title">Connected Dermatologist</p>
-      <div className="card" style={{ display: "flex", gap: 12, alignItems: "center", marginBottom: 20 }}>
-        <div style={{
-          width: 44, height: 44, borderRadius: "50%", background: "var(--success-light)",
-          display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0,
-        }}>
-          <Stethoscope size={20} color="var(--success)" />
+        <div>
+          <p className="section-title">Privacy & Legal</p>
+          <div className="card" style={{ padding: "4px 16px" }}>
+            <SettingRow icon={Lock} label="Privacy Policy" />
+            <SettingRow icon={Shield} label="Data & Consent" />
+            <SettingRow icon={FileText} label="Terms of Service" />
+            <SettingRow icon={Info} label="About Pocket-Derm" />
+          </div>
         </div>
-        <div style={{ flex: 1 }}>
-          <p style={{ fontSize: 14, fontWeight: 600 }}>{userProfile.dermatologist.name}</p>
-          <p style={{ fontSize: 12, color: "var(--text-muted)" }}>{userProfile.dermatologist.clinic}</p>
-          <p style={{ fontSize: 11, color: "var(--text-muted)" }}>Last visit: {userProfile.dermatologist.lastVisit}</p>
-        </div>
-        <span className="badge badge-success">Connected</span>
-      </div>
-
-      {/* Privacy & Legal */}
-      <p className="section-title">Privacy & Legal</p>
-      <div className="card" style={{ marginBottom: 20, padding: "4px 16px" }}>
-        <SettingRow icon={Lock} label="Privacy Policy" />
-        <SettingRow icon={Shield} label="Data & Consent" />
-        <SettingRow icon={FileText} label="Terms of Service" />
-        <SettingRow icon={Info} label="About Pocket-Derm" />
       </div>
 
       {/* Disclaimer */}
-      <div className="disclaimer" style={{ marginBottom: 20 }}>
+      <div className="disclaimer" style={{ marginBottom: 20, maxWidth: 600 }}>
         Pocket-Derm is a monitoring and informational tool only. It does not provide medical diagnoses.
         Always consult a qualified healthcare professional for clinical evaluation and treatment decisions.
         Your data is stored locally on this device for this prototype.
