@@ -35,7 +35,7 @@ export const moleHistory = [
     id: "m1",
     name: "Left Forearm",
     classification: "common",
-    bodyPosition: { x: 22, y: 52, view: "front" },
+    bodyPosition: { x: 27, y: 46, view: "front" },
     scans: [
       { date: "2026-04-10", status: "Low Risk", confidence: 92, diameterMm: 4.2, areaMm2: 13.9, notes: "No visible changes" },
       { date: "2026-03-08", status: "Low Risk", confidence: 90, diameterMm: 4.1, areaMm2: 13.2, notes: "Baseline scan" },
@@ -48,7 +48,7 @@ export const moleHistory = [
     name: "Upper Back",
     classification: "atypical",
     previousClassification: "common",
-    bodyPosition: { x: 55, y: 30, view: "back" },
+    bodyPosition: { x: 56, y: 32, view: "back" },
     scans: [
       { date: "2026-04-05", status: "Needs Review", confidence: 74, diameterMm: 6.8, areaMm2: 36.3, notes: "Slight asymmetry detected — irregular border emerging" },
       { date: "2026-02-20", status: "Low Risk", confidence: 88, diameterMm: 5.5, areaMm2: 23.8, notes: "Initial scan — uniform appearance" },
@@ -60,7 +60,7 @@ export const moleHistory = [
     id: "m3",
     name: "Right Shoulder",
     classification: "congenital",
-    bodyPosition: { x: 70, y: 24, view: "front" },
+    bodyPosition: { x: 66, y: 26, view: "front" },
     scans: [
       { date: "2026-03-28", status: "Low Risk", confidence: 95, diameterMm: 7.0, areaMm2: 38.5, notes: "Stable appearance — consistent with congenital nevus" },
       { date: "2026-01-15", status: "Low Risk", confidence: 93, diameterMm: 6.9, areaMm2: 37.4, notes: "Baseline scan" },
@@ -73,7 +73,7 @@ export const moleHistory = [
     name: "Left Calf",
     classification: "suspicious",
     previousClassification: "atypical",
-    bodyPosition: { x: 40, y: 82, view: "front" },
+    bodyPosition: { x: 42, y: 78, view: "front" },
     scans: [
       { date: "2026-03-15", status: "High Priority Review Recommended", confidence: 62, diameterMm: 8.3, areaMm2: 54.1, notes: "Irregular border, asymmetric shape, mixed coloring noted" },
     ],
@@ -84,7 +84,7 @@ export const moleHistory = [
     id: "m5",
     name: "Chest",
     classification: "blue",
-    bodyPosition: { x: 48, y: 32, view: "front" },
+    bodyPosition: { x: 53, y: 33, view: "front" },
     scans: [
       { date: "2026-02-28", status: "Low Risk", confidence: 91, diameterMm: 3.8, areaMm2: 11.3, notes: "Blue-gray coloring, well-defined borders — consistent with blue nevus" },
     ],

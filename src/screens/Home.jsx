@@ -1,6 +1,5 @@
-import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Camera, Clock, FileText, MessageCircle, Bell, Shield, ChevronRight, Filter } from "lucide-react";
+import { Camera, Clock, FileText, MessageCircle, Bell, Shield, ChevronRight } from "lucide-react";
 import { dashboardStats, userProfile } from "../data/mockData";
 import StatusBadge from "../components/StatusBadge";
 import BodyMap from "../components/BodyMap";
@@ -12,15 +11,8 @@ const actions = [
   { icon: MessageCircle, label: "Ask GenA", path: "/chat", color: "#f59e0b" },
 ];
 
-const filters = [
-  { value: "all", label: "All Moles" },
-  { value: "high-risk", label: "High Risk" },
-  { value: "recent", label: "Recent" },
-];
-
 export default function Home() {
   const navigate = useNavigate();
-  const [bodyFilter, setBodyFilter] = useState("all");
 
   return (
     <div className="screen">
@@ -69,27 +61,9 @@ export default function Home() {
       </div>
 
       {/* Body Map section */}
-      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 12 }}>
-        <p className="section-title" style={{ marginBottom: 0 }}>Your Body Map</p>
-        <div style={{ display: "flex", gap: 4, alignItems: "center" }}>
-          <Filter size={14} color="var(--text-muted)" />
-          <select
-            value={bodyFilter}
-            onChange={(e) => setBodyFilter(e.target.value)}
-            style={{
-              border: "1px solid var(--border)", borderRadius: 6,
-              padding: "4px 8px", fontSize: 12, color: "var(--text-secondary)",
-              background: "white", cursor: "pointer", outline: "none",
-            }}
-          >
-            {filters.map((f) => (
-              <option key={f.value} value={f.value}>{f.label}</option>
-            ))}
-          </select>
-        </div>
-      </div>
+      <p className="section-title">Your Body Map</p>
       <div style={{ marginBottom: 28 }}>
-        <BodyMap filter={bodyFilter} />
+        <BodyMap />
       </div>
 
       {/* Quick actions */}
