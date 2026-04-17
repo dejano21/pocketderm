@@ -129,6 +129,7 @@ export default function BodyMap({ filter: externalFilter }) {
 
   const handleMarkerClick = (mole, e) => {
     e.stopPropagation();
+    e.preventDefault();
     if (focused === mole.id) {
       navigate(`/history/${mole.id}`);
     } else {
@@ -140,8 +141,11 @@ export default function BodyMap({ filter: externalFilter }) {
   const showTooltip = (mole, e) => {
     const rect = containerRef.current?.getBoundingClientRect();
     if (!rect) return;
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
+    // Support both mouse and touch events
+    const clientX = e.changedTouches ? e.changedTouches[0].clientX : e.clientX;
+    const clientY = e.changedTouches ? e.changedTouches[0].clientY : e.clientY;
+    const x = clientX - rect.left;
+    const y = clientY - rect.top;
     setTooltip({ mole, x, y });
   };
 
@@ -228,6 +232,7 @@ export default function BodyMap({ filter: externalFilter }) {
           minHeight: 320,
         }}
         onClick={clearFocus}
+        onTouchEnd={(e) => { if (e.target === containerRef.current) clearFocus(); }}
       >
         {/* Dim overlay when focused */}
         {focused && (
@@ -258,9 +263,12 @@ export default function BodyMap({ filter: externalFilter }) {
                 key={mole.id}
                 style={{ cursor: "pointer", zIndex: isFocused ? 10 : 2 }}
                 onClick={(e) => handleMarkerClick(mole, e.nativeEvent)}
+                onTouchEnd={(e) => { e.stopPropagation(); handleMarkerClick(mole, e.nativeEvent); }}
                 onMouseEnter={(e) => { if (!focused) showTooltip(mole, e.nativeEvent); }}
                 onMouseLeave={() => { if (!focused) setTooltip(null); }}
               >
+                {/* Invisible touch target — large enough for fingers (min 44px equivalent) */}
+                <circle cx={x} cy={y} r="6" fill="transparent" stroke="none" />
                 {/* Glow halo */}
                 <circle cx={x} cy={y} r={isFocused ? "5" : "3.8"} fill={color} opacity={isFocused ? 0.18 : 0.12}
                   style={{ transition: "r 0.2s, opacity 0.2s" }} />
