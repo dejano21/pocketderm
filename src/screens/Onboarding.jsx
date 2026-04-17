@@ -25,7 +25,7 @@ export default function Onboarding() {
     }}>
       {/* Logo */}
       <div style={{ marginBottom: 20 }}>
-        <Logo size={120} />
+        <Logo size={180} />
       </div>
 
       <h1 style={{ fontSize: 32, fontWeight: 800, marginBottom: 8, color: "var(--text)" }}>
