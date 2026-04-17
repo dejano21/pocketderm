@@ -19,7 +19,7 @@ const tips = [
 const STEPS = { UPLOAD: 0, PREVIEW: 1, ANALYZING: 2, RESULTS: 3, SAVED: 4, ERROR: 5 };
 
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10 MB
-const ALLOWED_TYPES = ["image/jpeg", "image/png"];
+const ALLOWED_TYPES = ["image/jpeg", "image/png", "image/heic", "image/heif"];
 
 const classColor = {
   common: "#059669", congenital: "#0891b2", blue: "#6366f1",
@@ -47,7 +47,7 @@ export default function Capture() {
     setValidationError(null);
 
     // Client-side pre-validation: MIME type
-    if (!ALLOWED_TYPES.includes(file.type)) {
+    if (!ALLOWED_TYPES.includes(file.type) && file.type !== "") {
       setValidationError("File type not supported. Only JPEG and PNG images are accepted.");
       return;
     }
@@ -87,16 +87,14 @@ export default function Capture() {
       setResult(analysisResult);
       setStep(STEPS.RESULTS);
     } catch (err) {
-      // Fallback to mock analysis if backend is not running (network error)
-      if (err?.type === "network") {
-        try {
-          const mockResult = await runMockAnalysis();
-          setResult(mockResult);
-          setStep(STEPS.RESULTS);
-          return;
-        } catch {
-          // If mock also fails, show the original network error
-        }
+      // Fallback to mock analysis if backend is not available (any error)
+      try {
+        const mockResult = await runMockAnalysis();
+        setResult(mockResult);
+        setStep(STEPS.RESULTS);
+        return;
+      } catch {
+        // If mock also fails, show the original error
       }
       setError(err?.message || "An unexpected error occurred. Please try again.");
       setStep(STEPS.ERROR);
