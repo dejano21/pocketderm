@@ -1,3 +1,9 @@
+// ─── Module imports ──────────────────────────────────────────────────────────
+import { validateImage } from './imageValidator.js';
+import { runPipeline } from './analysisPipeline.js';
+import { renderResults, showLoading, hideLoading, showError } from './resultsDisplay.js';
+import { PipelineError } from './errors.js';
+
 // ─── State ───────────────────────────────────────────────────────────────────
 const state = {
   currentImage: null,
@@ -41,7 +47,15 @@ fileInput.addEventListener('change', e => {
   if (e.target.files[0]) handleFile(e.target.files[0]);
 });
 
-function handleFile(file) {
+async function handleFile(file) {
+  // Validate before showing preview (Requirements 1.1–1.5)
+  const validation = await validateImage(file);
+  if (!validation.valid) {
+    showError(validation.error);
+    showPanel('results-panel');
+    return;
+  }
+
   state.currentImage = file;
   const reader = new FileReader();
   reader.onload = ev => {
@@ -84,63 +98,59 @@ function setStep(active) {
 async function runAnalysis() {
   showPanel('analysis-panel');
   setStep(1);
+  showLoading();
 
-  // Run first three visual steps while Bedrock call is in-flight
+  // Run first three visual steps while pipeline is in-flight
   const uiSteps = [
     { id: 'astep-1', duration: 800 },
     { id: 'astep-2', duration: 1000 },
     { id: 'astep-3', duration: 900 },
   ];
 
-  // Kick off Bedrock call in parallel with the UI animation
-  const bedrockPromise = analyzeWithBedrock(state.currentImageDataURL).catch(err => {
-    console.warn('Bedrock call failed, falling back to mock:', err.message);
-    return null; // null signals fallback
+  // Kick off the real pipeline in parallel with the UI animation
+  const pipelinePromise = runPipeline(state.currentImage, 'user-demo').catch(err => {
+    console.warn('Pipeline failed, falling back to mock:', err.message);
+    return { _error: err };
   });
 
   for (const step of uiSteps) {
     await animateStep(step.id, step.duration);
   }
 
-  // Wait for Bedrock (or fallback) while the last step animates
-  const [bedrockResult] = await Promise.all([
-    bedrockPromise,
+  const [pipelineResult] = await Promise.all([
+    pipelinePromise,
     animateStep('astep-4', 1000),
   ]);
 
+  hideLoading();
   setStep(2);
 
-  const location = document.getElementById('body-location').value || 'Unspecified';
-  const notes = document.getElementById('scan-notes').value || '';
-
-  if (bedrockResult) {
-    // Map Bedrock response to the app's result shape
-    state.analysisResult = {
-      id: Date.now(),
-      date: new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }),
-      time: new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
-      location,
-      notes,
-      imageDataURL: state.currentImageDataURL,
-      segPoints: generateSegPoints(),
-      label: bedrockResult.label ?? 'Unknown',
-      risk: bedrockResult.risk ?? 'moderate',
-      confidence: bedrockResult.confidence ?? 0.75,
-      description: bedrockResult.description ?? '',
-      explanation: bedrockResult.explanation ?? '',
-      dermSummary: bedrockResult.dermSummary ?? '',
-      nextSteps: bedrockResult.nextSteps ?? [],
-      bedrockMetrics: bedrockResult.metrics ?? null,
-    };
-  } else {
-    // Fallback to mock if Bedrock is not configured or fails
-    state.analysisResult = generateMockResult();
+  if (pipelineResult && pipelineResult._error) {
+    const err = pipelineResult._error;
+    let msg;
+    if (err instanceof PipelineError && err.step) {
+      msg = `Analysis failed during ${err.step}. Please try again.`;
+    } else {
+      // Fallback to mock result when pipeline is not configured
+      console.warn('Using mock result due to pipeline error:', err.message);
+      const mockResult = generateMockPipelineResult();
+      state.analysisResult = mockResult;
+      renderResults(mockResult);
+      showPanel('results-panel');
+      setStep(2);
+      saveToHistory(mockResult);
+      return;
+    }
+    showError(msg);
+    showPanel('results-panel');
+    return;
   }
 
-  renderResults(state.analysisResult);
+  state.analysisResult = pipelineResult;
+  renderResults(pipelineResult);
   showPanel('results-panel');
   setStep(2);
-  saveToHistory(state.analysisResult);
+  saveToHistory(pipelineResult);
 }
 
 function animateStep(stepId, duration) {
@@ -166,7 +176,45 @@ function animateStep(stepId, duration) {
   });
 }
 
-// ─── Mock AI Result Generator ─────────────────────────────────────────────────
+// ─── Mock Pipeline Result Generator ──────────────────────────────────────────
+function generateMockPipelineResult() {
+  const classes = [
+    { category: 'common nevus', confidence: 0.87 + Math.random() * 0.1, risk: 'low', score: 22 },
+    { category: 'atypical nevus', confidence: 0.72 + Math.random() * 0.1, risk: 'moderate', score: 55 },
+    { category: 'melanoma-suspicious', confidence: 0.81 + Math.random() * 0.08, risk: 'high', score: 78 },
+  ];
+  const pick = classes[Math.floor(Math.random() * classes.length)];
+  const DISCLAIMER_TEXT = 'This is an AI-generated assessment and is not a medical diagnosis. Please consult a licensed dermatologist.';
+
+  return {
+    classificationResult: { category: pick.category, confidence: pick.confidence },
+    featureMetrics: {
+      borderRegularity: pick.risk === 'low' ? 0.91 : pick.risk === 'moderate' ? 0.74 : 0.52,
+      symmetryScore: pick.risk === 'low' ? 0.88 : pick.risk === 'moderate' ? 0.71 : 0.49,
+      colorUniformity: pick.risk === 'low' ? 0.93 : pick.risk === 'moderate' ? 0.68 : 0.41,
+      boundaryPoints: generateSegPoints(),
+      estimatedAreaMm2: pick.risk === 'low' ? 4.2 : pick.risk === 'moderate' ? 7.8 : 12.4,
+    },
+    explanationText: `Based on the image analysis, the lesion shows characteristics consistent with a <strong>${pick.category}</strong>. The model identified features consistent with a ${pick.risk}-risk lesion. Asymmetry, Border, Color, Diameter, and Evolution (ABCDE) criteria were evaluated. ${DISCLAIMER_TEXT}`,
+    riskResult: { level: pick.risk, score: pick.score },
+    disclaimer: DISCLAIMER_TEXT,
+    s3Key: `demo/${Date.now()}-mock.jpg`,
+    // Legacy fields for history/derm views
+    id: Date.now(),
+    date: new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }),
+    time: new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
+    location: document.getElementById('body-location')?.value || 'Unspecified',
+    notes: document.getElementById('scan-notes')?.value || '',
+    imageDataURL: state.currentImageDataURL,
+    label: pick.category,
+    risk: pick.risk,
+    confidence: pick.confidence,
+    dermSummary: `Mock result: ${pick.category} with ${Math.round(pick.confidence * 100)}% confidence. Risk: ${pick.risk}.`,
+    nextSteps: [],
+  };
+}
+
+// ─── Mock AI Result Generator (legacy, kept for history seeding) ──────────────
 function generateMockResult() {
   const classes = [
     {
@@ -399,7 +447,26 @@ function renderNextSteps(result) {
 
 // ─── History ──────────────────────────────────────────────────────────────────
 function saveToHistory(result) {
-  state.scanHistory.unshift(result);
+  // Normalize PipelineResult to the legacy history shape
+  const entry = result.classificationResult
+    ? {
+        id: result.id || Date.now(),
+        label: result.classificationResult.category,
+        risk: result.riskResult.level,
+        confidence: result.classificationResult.confidence,
+        description: '',
+        explanation: result.explanationText || '',
+        dermSummary: result.dermSummary || `${result.classificationResult.category} — risk: ${result.riskResult.level}, score: ${result.riskResult.score}`,
+        nextSteps: result.nextSteps || [],
+        date: result.date || new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }),
+        time: result.time || new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
+        location: result.location || document.getElementById('body-location')?.value || 'Unspecified',
+        notes: result.notes || document.getElementById('scan-notes')?.value || '',
+        imageDataURL: result.imageDataURL || state.currentImageDataURL,
+        segPoints: result.featureMetrics?.boundaryPoints || generateSegPoints(),
+      }
+    : result;
+  state.scanHistory.unshift(entry);
 }
 
 function renderHistory() {

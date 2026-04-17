@@ -1,0 +1,12 @@
+{
+  "weights": {
+    "classificationConfidence": 0.40,
+    "borderRegularity": 0.20,
+    "symmetryScore": 0.20,
+    "colorUniformity": 0.20
+  },
+  "thresholds": {
+    "low": 40,
+    "moderate": 70
+  }
+}
