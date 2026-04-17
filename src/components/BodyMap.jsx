@@ -4,29 +4,29 @@ import { moleHistory, classificationTypes, getAreaGrowth } from "../data/mockDat
 
 /* ── Color maps ── */
 const MC = {
-  common: "#6B9E7E",
-  congenital: "#7D9B8C",
-  blue: "#7B8FB5",
-  atypical: "#D4A054",
-  spitz: "#D4A054",
-  suspicious: "#C4605A",
+  common: "#10b981",
+  congenital: "#2563eb",
+  blue: "#6366f1",
+  atypical: "#f59e0b",
+  spitz: "#f59e0b",
+  suspicious: "#ef4444",
 };
 
 /* ── Filter config ── */
 const FILTERS = [
-  { value: "all", label: "All", dot: "#5E7A6B" },
-  { value: "low", label: "Low Risk", dot: "#6B9E7E" },
-  { value: "review", label: "Review", dot: "#D4A054" },
-  { value: "high", label: "High Risk", dot: "#C4605A" },
+  { value: "all", label: "All", dot: "#64748b" },
+  { value: "low", label: "Low Risk", dot: "#10b981" },
+  { value: "review", label: "Review", dot: "#f59e0b" },
+  { value: "high", label: "High Risk", dot: "#ef4444" },
 ];
 
 /* ── Legend items ── */
 const LEGEND = [
-  { color: "#6B9E7E", label: "Common / Low Risk" },
-  { color: "#7D9B8C", label: "Congenital" },
-  { color: "#7B8FB5", label: "Blue Nevus" },
-  { color: "#D4A054", label: "Atypical / Review" },
-  { color: "#C4605A", label: "Suspicious / High" },
+  { color: "#10b981", label: "Common / Low Risk" },
+  { color: "#2563eb", label: "Congenital" },
+  { color: "#6366f1", label: "Blue Nevus" },
+  { color: "#f59e0b", label: "Atypical / Review" },
+  { color: "#ef4444", label: "Suspicious / High" },
 ];
 
 /* ── Refined body SVG ── */

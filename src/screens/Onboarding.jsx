@@ -20,7 +20,7 @@ export default function Onboarding() {
       alignItems: "center",
       justifyContent: "center",
       padding: "40px 24px",
-      background: "linear-gradient(180deg, #EDE9E4 0%, var(--bg) 40%)",
+      background: "linear-gradient(180deg, #dbeafe 0%, var(--bg) 40%)",
       textAlign: "center",
     }}>
       {/* Logo */}

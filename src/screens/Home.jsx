@@ -23,13 +23,7 @@ export default function Home() {
           <p style={{ fontSize: 14, color: "var(--text-secondary)" }}>Welcome back,</p>
           <h1 style={{ fontSize: 26, fontWeight: 700 }}>{userProfile.name.split(" ")[0]}</h1>
         </div>
-        <div style={{
-          width: 44, height: 44, borderRadius: "50%",
-          background: "linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%)",
-          display: "flex", alignItems: "center", justifyContent: "center",
-        }}>
         <Logo size={40} />
-      </div>
       </div>
 
       {/* Top row: stats + dermatologist */}
