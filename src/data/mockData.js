@@ -124,7 +124,7 @@ export const genAConversation = [
   {
     id: 1,
     role: "assistant",
-    text: "Hi! I'm GenA, your Pocket Derm assistant. I can help explain your scan results, answer general skin health questions, and guide you through the app. How can I help today?",
+    text: "Hi! I'm GenA, your Derma Pocket assistant. I can help explain your scan results, answer general skin health questions, and guide you through the app. How can I help today?",
   },
 ];
 
@@ -139,7 +139,7 @@ export const genAResponses = {
   "What does my result mean?":
     'Your most recent scan was classified as "Low Risk" with 92% confidence. This means the visual characteristics of the mole — including its shape, color, and borders — appear consistent with benign skin features. However, this is an informational assessment only and not a medical diagnosis. Regular monitoring and professional check-ups are always recommended.',
   "Should I book a dermatologist?":
-    "Based on your current scan history, there's no urgent need for an immediate appointment. That said, it's always a good idea to have an annual skin check with a dermatologist, especially if you have a family history of skin cancer or notice any changes. You can share your Pocket Derm summary with your connected dermatologist anytime.",
+    "Based on your current scan history, there's no urgent need for an immediate appointment. That said, it's always a good idea to have an annual skin check with a dermatologist, especially if you have a family history of skin cancer or notice any changes. You can share your Derma Pocket summary with your connected dermatologist anytime.",
   "How do I take a better photo?":
     "Great question! For the best results: use natural daylight or a well-lit room, hold your phone about 10–15 cm from the mole, make sure the mole is centered and in focus, avoid shadows or flash glare, and keep the background clean. Consistent photo conditions help with accurate comparisons over time.",
   "What is the ABCDE rule?":

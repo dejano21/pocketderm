@@ -23,7 +23,7 @@ export default function GenAChat() {
 
     setTimeout(() => {
       const response = genAResponses[text.trim()] ||
-        "That's a great question. Based on your scan history, everything looks stable. Remember, Pocket Derm provides informational guidance only — for clinical advice, please consult your connected dermatologist.";
+        "That's a great question. Based on your scan history, everything looks stable. Remember, Derma Pocket provides informational guidance only — for clinical advice, please consult your connected dermatologist.";
       setMessages((prev) => [
         ...prev,
         { id: Date.now() + 1, role: "assistant", text: response },

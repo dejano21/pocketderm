@@ -1,8 +1,9 @@
 import { useNavigate } from "react-router-dom";
-import { Camera, Clock, FileText, MessageCircle, Bell, Shield, ChevronRight } from "lucide-react";
+import { Camera, Clock, FileText, MessageCircle, Bell, ChevronRight } from "lucide-react";
 import { dashboardStats, userProfile } from "../data/mockData";
 import StatusBadge from "../components/StatusBadge";
 import BodyMap from "../components/BodyMap";
+import Logo from "../components/Logo";
 
 const actions = [
   { icon: Camera, label: "New Scan", path: "/capture", color: "var(--primary)" },
@@ -27,8 +28,8 @@ export default function Home() {
           background: "linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%)",
           display: "flex", alignItems: "center", justifyContent: "center",
         }}>
-          <Shield size={22} color="white" />
-        </div>
+        <Logo size={40} />
+      </div>
       </div>
 
       {/* Top row: stats + dermatologist */}

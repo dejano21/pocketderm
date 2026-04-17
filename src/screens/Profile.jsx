@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import {
-  ArrowLeft, User, Bell, BellOff, Shield, FileText, Lock,
+  ArrowLeft, User, Bell, BellOff, ShieldCheck, FileText, Lock,
   ChevronRight, LogOut, Stethoscope, Info
 } from "lucide-react";
 import { userProfile } from "../data/mockData";
@@ -108,16 +108,16 @@ export default function Profile() {
           <p className="section-title">Privacy & Legal</p>
           <div className="card" style={{ padding: "4px 16px" }}>
             <SettingRow icon={Lock} label="Privacy Policy" />
-            <SettingRow icon={Shield} label="Data & Consent" />
+            <SettingRow icon={ShieldCheck} label="Data & Consent" />
             <SettingRow icon={FileText} label="Terms of Service" />
-            <SettingRow icon={Info} label="About Pocket Derm" />
+            <SettingRow icon={Info} label="About Derma Pocket" />
           </div>
         </div>
       </div>
 
       {/* Disclaimer */}
       <div className="disclaimer" style={{ marginBottom: 20, maxWidth: 600 }}>
-        Pocket Derm is a monitoring and informational tool only. It does not provide medical diagnoses.
+        Derma Pocket is a monitoring and informational tool only. It does not provide medical diagnoses.
         Always consult a qualified healthcare professional for clinical evaluation and treatment decisions.
         Your data is stored locally on this device for this prototype.
       </div>

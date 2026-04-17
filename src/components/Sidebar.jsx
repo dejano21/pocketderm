@@ -1,5 +1,6 @@
 import { useLocation, useNavigate } from "react-router-dom";
-import { Home, Camera, Clock, MessageCircle, User, FileText, Shield } from "lucide-react";
+import { Home, Camera, Clock, MessageCircle, User, FileText } from "lucide-react";
+import Logo from "./Logo";
 
 const links = [
   { path: "/home", icon: Home, label: "Home" },
@@ -36,15 +37,8 @@ export default function Sidebar() {
           padding: "0 20px", marginBottom: 32, cursor: "pointer",
         }}
       >
-        <div style={{
-          width: 36, height: 36, borderRadius: 10,
-          background: "linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%)",
-          display: "flex", alignItems: "center", justifyContent: "center",
-          boxShadow: "0 4px 12px rgba(8,145,178,0.2)",
-        }}>
-          <Shield size={20} color="white" />
-        </div>
-        <span style={{ fontSize: 18, fontWeight: 800, color: "var(--text)" }}>Pocket Derm</span>
+        <Logo size={34} />
+        <span style={{ fontSize: 18, fontWeight: 800, color: "var(--text)" }}>Derma Pocket</span>
       </div>
 
       {/* Nav links */}
@@ -79,9 +73,9 @@ export default function Sidebar() {
       <div style={{ padding: "0 20px" }}>
         <div style={{
           padding: "12px 14px", borderRadius: "var(--radius-sm)",
-          background: "#f1f5f9", fontSize: 11, color: "var(--text-muted)", lineHeight: 1.5,
+          background: "var(--bg)", fontSize: 11, color: "var(--text-muted)", lineHeight: 1.5,
         }}>
-          Pocket Derm Prototype<br />
+          Derma Pocket Prototype<br />
           For demo purposes only
         </div>
       </div>
