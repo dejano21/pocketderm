@@ -227,3 +227,11 @@ input:focus, textarea:focus { border-color: var(--primary); }
     flex-wrap: wrap;
   }
 }
+
+
+/* Onboarding feature cards: 4 columns on desktop */
+@media (min-width: 768px) {
+  .onboarding-features {
+    grid-template-columns: repeat(4, 1fr) !important;
+  }
+}

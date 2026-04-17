@@ -42,9 +42,11 @@ export default function Onboarding() {
       {/* Feature cards */}
       <div style={{
         display: "grid",
-        gridTemplateColumns: "repeat(auto-fit, minmax(150px, 1fr))",
-        gap: 14, width: "100%", maxWidth: 640, marginBottom: 44,
-      }}>
+        gridTemplateColumns: "repeat(2, 1fr)",
+        gap: 14, width: "100%", maxWidth: 860, marginBottom: 44,
+      }}
+        className="onboarding-features"
+      >
         {features.map(({ icon: Icon, title, desc }) => (
           <div key={title} className="card" style={{ textAlign: "left", padding: 16 }}>
             <Icon size={22} color="var(--primary)" style={{ marginBottom: 8 }} />
