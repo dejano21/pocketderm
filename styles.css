@@ -773,7 +773,6 @@ body {
 
 .auth-container,
 .profile-container,
-.bodymap-container,
 .assistant-container {
   max-width: 900px;
   margin: 0 auto;
@@ -784,8 +783,6 @@ body {
 .assistant-card,
 .profile-card,
 .connected-card,
-.bodymap-visual,
-.bodymap-legend,
 .privacy-section,
 .settings-section {
   background: var(--surface);
@@ -801,8 +798,7 @@ body {
 
 .auth-card h2,
 .assistant-header h2,
-.profile-header h2,
-.bodymap-header h2 {
+.profile-header h2 {
   font-size: 28px;
   font-weight: 700;
   margin-bottom: 8px;
@@ -810,8 +806,7 @@ body {
 
 .auth-card p,
 .assistant-header p,
-.profile-header p,
-.bodymap-header p {
+.profile-header p {
   color: var(--text-muted);
   margin-bottom: 24px;
 }
@@ -822,7 +817,9 @@ body {
 .connected-card strong,
 .connected-card span,
 .legend-item,
-.assistant-label {
+.assistant-label,
+.auth-card label,
+.login-card label,
   font-size: 13px;
 }
 
@@ -1052,122 +1049,6 @@ body {
   justify-content: flex-end;
 }
 
-.bodymap-controls {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 16px;
-  margin-bottom: 24px;
-}
-
-.toggle-group {
-  display: flex;
-  gap: 8px;
-}
-
-.toggle-button,
-.chip {
-  border: 1px solid var(--border);
-  background: var(--surface);
-  color: var(--text);
-  border-radius: 999px;
-  padding: 10px 16px;
-  cursor: pointer;
-  font-size: 13px;
-  transition: all 0.15s ease;
-}
-
-.toggle-button.active,
-.chip.active {
-  border-color: var(--blue);
-  background: var(--blue-light);
-  color: var(--blue);
-}
-
-.filter-chips {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-
-.bodymap-grid {
-  display: grid;
-  grid-template-columns: 1.35fr 0.65fr;
-  gap: 24px;
-}
-
-.bodymap-visual {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 24px;
-  position: relative;
-  min-height: 520px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.bodymap-figure {
-  position: relative;
-  width: 240px;
-  height: 520px;
-}
-
-.bodymap-figure::before {
-  content: '';
-  position: absolute;
-  left: 50%;
-  top: 10%;
-  transform: translateX(-50%);
-  width: 110px;
-  height: 120px;
-  border-radius: 50%;
-  background: #e2e8f0;
-}
-
-.bodymap-figure::after {
-  content: '';
-  position: absolute;
-  left: 50%;
-  top: 25%;
-  transform: translateX(-50%);
-  width: 130px;
-  height: 260px;
-  border-radius: 70px;
-  background: #e2e8f0;
-}
-
-.bodymap-figure .bodymap-marker {
-  position: absolute;
-  width: 16px;
-  height: 16px;
-  border-radius: 50%;
-  border: 2px solid white;
-  cursor: pointer;
-  transition: transform 0.2s ease;
-}
-
-.bodymap-figure .bodymap-marker:hover {
-  transform: scale(1.15);
-}
-
-.bodymap-marker.low { background: #34c77b; }
-.bodymap-marker.congenital { background: #4f8ef7; }
-.bodymap-marker.blueNevus { background: #8b5cf6; }
-.bodymap-marker.review { background: #f59e0b; }
-.bodymap-marker.high { background: #ef4444; }
-
-.bodymap-legend {
-  padding: 24px;
-  display: grid;
-  gap: 14px;
-}
-
-.bodymap-legend h3 {
-  margin-bottom: 12px;
-}
 
 .legend-item {
   display: flex;
@@ -1278,12 +1159,8 @@ body {
 
 @media (max-width: 768px) {
   .profile-grid,
-  .bodymap-grid,
   .assistant-quick-actions {
     grid-template-columns: 1fr;
-  }
-  .bodymap-visual {
-    min-height: 420px;
   }
 }
 

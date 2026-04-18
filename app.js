@@ -13,22 +13,7 @@ const state = {
     monthlyReminders: true,
   },
   assistantMessages: [],
-  bodyMapView: 'front',
-  bodyMapFilter: 'all',
 };
-
-const bodyMapMarkers = [
-  { id: 'a1', side: 'front', category: 'low', label: 'Left shoulder', top: '24%', left: '44%' },
-  { id: 'a2', side: 'front', category: 'congenital', label: 'Chest', top: '36%', left: '48%' },
-  { id: 'a3', side: 'front', category: 'blueNevus', label: 'Right arm', top: '34%', left: '64%' },
-  { id: 'a4', side: 'front', category: 'review', label: 'Right thigh', top: '68%', left: '56%' },
-  { id: 'a5', side: 'front', category: 'high', label: 'Left knee', top: '78%', left: '40%' },
-  { id: 'b1', side: 'back', category: 'low', label: 'Upper back', top: '26%', left: '48%' },
-  { id: 'b2', side: 'back', category: 'congenital', label: 'Left lower back', top: '44%', left: '34%' },
-  { id: 'b3', side: 'back', category: 'blueNevus', label: 'Right shoulder blade', top: '30%', left: '60%' },
-  { id: 'b4', side: 'back', category: 'review', label: 'Right calf', top: '70%', left: '58%' },
-  { id: 'b5', side: 'back', category: 'high', label: 'Spine', top: '40%', left: '48%' },
-];
 
 function getUsers() {
   return JSON.parse(localStorage.getItem(USER_STORAGE_KEY) || '{}');
@@ -246,35 +231,6 @@ function generateAssistantResponse(prompt) {
   return 'This assistant can help explain your scan results, identify next steps, and offer photo capture tips. Try a quick action above or ask a specific question.';
 }
 
-function setBodyMapView(view) {
-  state.bodyMapView = view;
-  document.querySelectorAll('.toggle-button').forEach(btn => btn.classList.toggle('active', btn.dataset.view === view));
-  renderBodyMap();
-}
-
-function setBodyMapFilter(filter) {
-  state.bodyMapFilter = filter;
-  document.querySelectorAll('.chip').forEach(chip => chip.classList.toggle('active', chip.dataset.filter === filter));
-  renderBodyMap();
-}
-
-function renderBodyMap() {
-  const container = document.getElementById('bodymap-figure');
-  if (!container) return;
-  container.innerHTML = '';
-  const filteredMarkers = bodyMapMarkers.filter(marker => marker.side === state.bodyMapView && (state.bodyMapFilter === 'all' || marker.category === state.bodyMapFilter));
-  filteredMarkers.forEach(marker => {
-    const item = document.createElement('button');
-    item.type = 'button';
-    item.className = `bodymap-marker ${marker.category}`;
-    item.style.top = marker.top;
-    item.style.left = marker.left;
-    item.title = `${marker.label} — ${marker.category.replace(/([A-Z])/g, ' $1')}`;
-    item.innerHTML = '<span></span>';
-    container.appendChild(item);
-  });
-}
-
 function initializeAssistant() {
   if (state.assistantMessages.length === 0) {
     state.assistantMessages = [
@@ -289,7 +245,6 @@ function updateScreenDependencies(screenId) {
   if (screenId === 'dermatologist') renderDermReports();
   if (screenId === 'profile') renderProfile();
   if (screenId === 'assistant') initializeAssistant();
-  if (screenId === 'bodymap') renderBodyMap();
 }
 
 function navigateTo(screenId) {
@@ -866,8 +821,6 @@ function initializeApp() {
   loadCurrentUser();
   if (state.currentUser) {
     renderProfile();
-    setBodyMapView(state.bodyMapView);
-    setBodyMapFilter(state.bodyMapFilter);
     initializeAssistant();
     navigateTo('home');
   } else {

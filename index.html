@@ -24,7 +24,6 @@
       <button class="nav-tab active" data-screen="home">Home</button>
       <button class="nav-tab" data-screen="scan">New Scan</button>
       <button class="nav-tab" data-screen="history">History</button>
-      <button class="nav-tab" data-screen="bodymap">Body Map</button>
       <button class="nav-tab" data-screen="assistant">Assistant</button>
       <button class="nav-tab" data-screen="profile">Profile</button>
     </div>
@@ -284,41 +283,6 @@
             <div class="empty-icon">📋</div>
             <h3>No reports yet</h3>
             <p>Complete a scan to generate a clinical summary for your dermatologist.</p>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section id="screen-bodymap" class="screen">
-      <div class="bodymap-container">
-        <div class="bodymap-header">
-          <h2>Body Map Visualization</h2>
-          <p>Review your scanned areas and identify spots by risk category.</p>
-        </div>
-        <div class="bodymap-controls">
-          <div class="toggle-group">
-            <button class="toggle-button active" data-view="front" onclick="setBodyMapView('front')">Front</button>
-            <button class="toggle-button" data-view="back" onclick="setBodyMapView('back')">Back</button>
-          </div>
-          <div class="filter-chips" id="bodymap-filters">
-            <button class="chip active" data-filter="all" onclick="setBodyMapFilter('all')">All</button>
-            <button class="chip" data-filter="low" onclick="setBodyMapFilter('low')">Low Risk</button>
-            <button class="chip" data-filter="review" onclick="setBodyMapFilter('review')">Review</button>
-            <button class="chip" data-filter="high" onclick="setBodyMapFilter('high')">High Risk</button>
-          </div>
-        </div>
-
-        <div class="bodymap-grid">
-          <div class="bodymap-visual">
-            <div class="bodymap-figure" id="bodymap-figure"></div>
-          </div>
-          <div class="bodymap-legend">
-            <h3>Legend</h3>
-            <div class="legend-item"><span class="legend-dot green"></span>Low Risk</div>
-            <div class="legend-item"><span class="legend-dot blue"></span>Congenital</div>
-            <div class="legend-item"><span class="legend-dot purple"></span>Blue Nevus</div>
-            <div class="legend-item"><span class="legend-dot orange"></span>Review</div>
-            <div class="legend-item"><span class="legend-dot red"></span>High Risk</div>
           </div>
         </div>
       </div>
