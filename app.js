@@ -419,7 +419,7 @@ function generateMockResult() {
       risk: 'low',
       confidence: 0.87 + Math.random() * 0.1,
       description: 'Common mole — appears benign with regular borders and uniform pigmentation.',
-      explanation: `Based on the image analysis, the lesion shows characteristics consistent with a <strong>benign melanocytic nevus</strong> (common mole). The ResNet-50 classification model identified regular border symmetry, uniform color distribution, and a diameter within normal range — all indicators associated with low-risk lesions.\n\nThe SAM segmentation model successfully outlined the mole boundary, measuring an estimated area of <strong>4.2 mm²</strong>. No irregular border extensions were detected.\n\nThis result does <em>not</em> indicate a medical diagnosis. It is a screening aid to help you and your dermatologist monitor changes over time.`,
+      explanation: `Based on the image analysis, the lesion shows characteristics consistent with a <strong>benign melanocytic nevus</strong> (common mole). The ResNet-50 classification model identified regular border symmetry, uniform color distribution, and a diameter within normal range — all indicators associated with low-risk lesions.\n\nThe YOLO11s-sg segmentation model successfully outlined the mole boundary, measuring an estimated area of <strong>4.2 mm²</strong>. No irregular border extensions were detected.\n\nThis result does <em>not</em> indicate a medical diagnosis. It is a screening aid to help you and your dermatologist monitor changes over time.`,
       nextSteps: [
         { type: 'green', icon: '✅', text: 'Continue routine monitoring every 3–6 months.' },
         { type: 'green', icon: '📸', text: 'Re-scan if you notice any changes in size, shape, or color.' },
@@ -432,26 +432,26 @@ function generateMockResult() {
       risk: 'moderate',
       confidence: 0.72 + Math.random() * 0.1,
       description: 'Mildly atypical features detected — irregular border or color variation present.',
-      explanation: `The analysis identified features consistent with an <strong>atypical (dysplastic) nevus</strong>. The model detected mild asymmetry and slight color variation across the lesion, which are characteristics that warrant closer monitoring.\n\nSAM segmentation outlined an estimated area of <strong>7.8 mm²</strong> with a slightly irregular border on the lower-right quadrant.\n\nAtypical nevi are not necessarily cancerous, but they carry a modestly elevated risk compared to common moles. A dermatologist review is recommended within the next 4–8 weeks.`,
+      explanation: `The analysis identified features consistent with an <strong>atypical (dysplastic) nevus</strong>. The model detected mild asymmetry and slight color variation across the lesion, which are characteristics that warrant closer monitoring.\n\nYOLO11s-sg segmentation outlined an estimated area of <strong>7.8 mm²</strong> with a slightly irregular border on the lower-right quadrant.\n\nAtypical nevi are not necessarily cancerous, but they carry a modestly elevated risk compared to common moles. A dermatologist review is recommended within the next 4–8 weeks.`,
       nextSteps: [
         { type: 'yellow', icon: '📅', text: 'Schedule a dermatologist appointment within 4–8 weeks.' },
         { type: 'yellow', icon: '📸', text: 'Re-scan monthly to track any changes.' },
         { type: 'red', icon: '🚨', text: 'Seek urgent care if the mole bleeds, itches, or grows rapidly.' },
       ],
-      dermSummary: 'Atypical nevus detected with ~72% confidence. Mild asymmetry and color variation noted. SAM boundary shows slight irregularity. Recommend in-person evaluation within 4–8 weeks.',
+      dermSummary: 'Atypical nevus detected with ~72% confidence. Mild asymmetry and color variation noted. YOLO11s-sg boundary shows slight irregularity. Recommend in-person evaluation within 4–8 weeks.',
     },
     {
       label: 'Suspicious Lesion',
       risk: 'high',
       confidence: 0.81 + Math.random() * 0.08,
       description: 'High-risk features detected — prompt dermatologist evaluation recommended.',
-      explanation: `The model flagged this lesion as <strong>high-risk</strong>, identifying multiple ABCDE criteria: significant asymmetry, irregular and poorly defined borders, multi-tonal coloration, and a diameter exceeding 6 mm.\n\nSAM segmentation revealed a complex boundary with <strong>12.4 mm²</strong> estimated area and notable border irregularity across multiple quadrants.\n\n<strong>This does not confirm a diagnosis of melanoma</strong>, but the features identified are consistent with lesions that require prompt professional evaluation. Please contact your dermatologist as soon as possible.`,
+      explanation: `The model flagged this lesion as <strong>high-risk</strong>, identifying multiple ABCDE criteria: significant asymmetry, irregular and poorly defined borders, multi-tonal coloration, and a diameter exceeding 6 mm.\n\nYOLO11s-sg segmentation revealed a complex boundary with <strong>12.4 mm²</strong> estimated area and notable border irregularity across multiple quadrants.\n\n<strong>This does not confirm a diagnosis of melanoma</strong>, but the features identified are consistent with lesions that require prompt professional evaluation. Please contact your dermatologist as soon as possible.`,
       nextSteps: [
         { type: 'red', icon: '🚨', text: 'Contact your dermatologist immediately for an urgent evaluation.' },
         { type: 'red', icon: '🏥', text: 'Do not delay — early detection significantly improves outcomes.' },
         { type: 'yellow', icon: '📋', text: 'A clinical summary has been sent to your connected dermatologist.' },
       ],
-      dermSummary: 'HIGH RISK: Suspicious lesion with 81%+ confidence. Multiple ABCDE criteria flagged: asymmetry, irregular borders, multi-tonal color, diameter >6mm. SAM boundary shows complex irregular outline. URGENT evaluation recommended.',
+      dermSummary: 'HIGH RISK: Suspicious lesion with 81%+ confidence. Multiple ABCDE criteria flagged: asymmetry, irregular borders, multi-tonal color, diameter >6mm. YOLO11s-sg boundary shows complex irregular outline. URGENT evaluation recommended.',
     },
   ];
 
@@ -517,7 +517,7 @@ function renderResults(result) {
 
     <div class="result-card">
       <div class="result-card-header">
-        <span>🎯</span> Segmentation — SAM (Segment Anything Model)
+        <span>🎯</span> Segmentation — YOLO11s-sg
       </div>
       <div class="result-card-body">
         <div class="seg-result">
@@ -612,7 +612,7 @@ function drawSegmentation(result) {
     ctx.setLineDash([]);
     ctx.fillStyle = color;
     ctx.font = 'bold 11px Inter, sans-serif';
-    ctx.fillText('SAM boundary', 8, 18);
+    ctx.fillText('YOLO11s-sg boundary', 8, 18);
   };
 
   if (img.complete) draw();
@@ -760,7 +760,7 @@ function renderDermReports() {
           </div>
           <div class="derm-field">
             <label>Model</label>
-            <span>ResNet-50 + SAM</span>
+            <span>ResNet-50 + YOLO11s-sg</span>
           </div>
           <div class="derm-field">
             <label>Patient Notes</label>
