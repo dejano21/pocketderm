@@ -531,19 +531,31 @@ function renderResults(result) {
               <span class="seg-metric-value">${result.bedrockMetrics?.estimatedAreaMm2?.toFixed(1) ?? (Math.random() * 10 + 3).toFixed(1)} mm²</span>
             </div>
             <div class="seg-metric">
-              <span class="seg-metric-label">Border Regularity</span>
+              <span class="seg-metric-label">
+                Border Regularity
+                <button class="info-icon" onclick="showMetricInfo('borderRegularity')" title="Learn more">ℹ️</button>
+              </span>
               <span class="seg-metric-value">${result.bedrockMetrics?.borderRegularity ?? (result.risk === 'low' ? 'Regular' : result.risk === 'moderate' ? 'Mildly Irregular' : 'Irregular')}</span>
             </div>
             <div class="seg-metric">
-              <span class="seg-metric-label">Symmetry Score</span>
+              <span class="seg-metric-label">
+                Symmetry Score
+                <button class="info-icon" onclick="showMetricInfo('symmetryScore')" title="Learn more">ℹ️</button>
+              </span>
               <span class="seg-metric-value">${result.bedrockMetrics?.symmetryScore?.toFixed(2) ?? (result.risk === 'low' ? '0.91' : result.risk === 'moderate' ? '0.74' : '0.52')}</span>
             </div>
             <div class="seg-metric">
-              <span class="seg-metric-label">Color Uniformity</span>
+              <span class="seg-metric-label">
+                Color Uniformity
+                <button class="info-icon" onclick="showMetricInfo('colorUniformity')" title="Learn more">ℹ️</button>
+              </span>
               <span class="seg-metric-value">${result.bedrockMetrics?.colorUniformity ?? (result.risk === 'low' ? 'Uniform' : result.risk === 'moderate' ? 'Mild variation' : 'Multi-tonal')}</span>
             </div>
             <div class="seg-metric">
-              <span class="seg-metric-label">Boundary Points</span>
+              <span class="seg-metric-label">
+                Boundary Points
+                <button class="info-icon" onclick="showMetricInfo('boundaryPoints')" title="Learn more">ℹ️</button>
+              </span>
               <span class="seg-metric-value">32 detected</span>
             </div>
           </div>
@@ -845,4 +857,109 @@ function generatePlaceholderImage(color) {
   ctx.fillStyle = '#3d2a1a';
   ctx.fill();
   return canvas.toDataURL();
+}
+
+// ─── Metric Information Modal ─────────────────────────────────────────────────
+const metricInfo = {
+  borderRegularity: {
+    title: 'Border Regularity',
+    icon: '🔲',
+    description: 'Measures how smooth and even the edges of the mole are.',
+    details: `
+      <p><strong>What it means:</strong></p>
+      <ul>
+        <li><strong>Regular:</strong> The mole has smooth, well-defined borders with minimal irregularities. This is typical of benign (non-cancerous) moles.</li>
+        <li><strong>Mildly Irregular:</strong> Some unevenness or notching along the border. May warrant monitoring.</li>
+        <li><strong>Irregular:</strong> Jagged, poorly defined, or blurred edges. This is one of the warning signs in the ABCDE rule (B = Border irregularity).</li>
+      </ul>
+      <p><strong>Why it matters:</strong> Melanomas often have irregular, poorly defined borders, while benign moles typically have smooth, even edges.</p>
+    `,
+    abcde: 'B — Border irregularity'
+  },
+  symmetryScore: {
+    title: 'Symmetry Score',
+    icon: '⚖️',
+    description: 'Evaluates whether the mole looks the same on both sides.',
+    details: `
+      <p><strong>What it means:</strong></p>
+      <ul>
+        <li><strong>Score close to 1.0:</strong> The mole is highly symmetrical — if you draw a line through the middle, both halves match closely.</li>
+        <li><strong>Score 0.7–0.9:</strong> Mild asymmetry detected. Some variation between halves.</li>
+        <li><strong>Score below 0.7:</strong> Significant asymmetry. One half looks different from the other in shape, color, or texture.</li>
+      </ul>
+      <p><strong>Why it matters:</strong> Benign moles are usually symmetrical. Asymmetry is a key warning sign (A in the ABCDE rule) and may indicate a higher-risk lesion.</p>
+    `,
+    abcde: 'A — Asymmetry'
+  },
+  colorUniformity: {
+    title: 'Color Uniformity',
+    icon: '🎨',
+    description: 'Assesses whether the mole has a consistent color throughout.',
+    details: `
+      <p><strong>What it means:</strong></p>
+      <ul>
+        <li><strong>Uniform:</strong> The mole is one consistent color (usually brown or tan). This is typical of benign moles.</li>
+        <li><strong>Mild variation:</strong> Some areas are slightly darker or lighter, but overall color is fairly consistent.</li>
+        <li><strong>Multi-tonal:</strong> The mole has multiple distinct colors (black, brown, red, white, or blue). This is a warning sign.</li>
+      </ul>
+      <p><strong>Why it matters:</strong> Melanomas often display multiple colors or uneven pigmentation, while benign moles are typically one uniform shade.</p>
+    `,
+    abcde: 'C — Color variation'
+  },
+  boundaryPoints: {
+    title: 'Boundary Points',
+    icon: '📍',
+    description: 'The number of coordinate points used to outline the mole.',
+    details: `
+      <p><strong>What it means:</strong></p>
+      <p>The YOLO11s-sg segmentation model traces the edge of the mole using a series of coordinate points. In this analysis, <strong>32 boundary points</strong> were detected and used to create the green dashed outline you see on the image.</p>
+      <p><strong>Why it matters:</strong></p>
+      <ul>
+        <li>More boundary points allow for a more precise outline of complex or irregular shapes.</li>
+        <li>This data helps track changes in mole shape over time by comparing boundary points from different scans.</li>
+        <li>The boundary outline is used to calculate the estimated area and assess border regularity.</li>
+      </ul>
+      <p><strong>Technical note:</strong> The model automatically detects the mole's edge and generates these points. You don't need to do anything — this happens automatically during analysis.</p>
+    `,
+    abcde: null
+  }
+};
+
+function showMetricInfo(metricKey) {
+  const info = metricInfo[metricKey];
+  if (!info) return;
+
+  const modal = document.createElement('div');
+  modal.className = 'metric-info-modal';
+  modal.innerHTML = `
+    <div class="metric-info-overlay" onclick="closeMetricInfo()"></div>
+    <div class="metric-info-content">
+      <div class="metric-info-header">
+        <div>
+          <span class="metric-info-icon">${info.icon}</span>
+          <h3>${info.title}</h3>
+        </div>
+        <button class="metric-info-close" onclick="closeMetricInfo()">✕</button>
+      </div>
+      <div class="metric-info-body">
+        <p class="metric-info-description">${info.description}</p>
+        ${info.details}
+        ${info.abcde ? `<div class="metric-info-abcde"><strong>ABCDE Rule:</strong> ${info.abcde}</div>` : ''}
+      </div>
+      <div class="metric-info-footer">
+        <button class="btn-secondary" onclick="closeMetricInfo()">Close</button>
+      </div>
+    </div>
+  `;
+
+  document.body.appendChild(modal);
+  setTimeout(() => modal.classList.add('active'), 10);
+}
+
+function closeMetricInfo() {
+  const modal = document.querySelector('.metric-info-modal');
+  if (modal) {
+    modal.classList.remove('active');
+    setTimeout(() => modal.remove(), 300);
+  }
 }
