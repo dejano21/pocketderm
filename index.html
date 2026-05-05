@@ -1,15 +1,413 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <meta name="description" content="Pocket-Derm — Monitor suspicious moles over time. A mobile app prototype." />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <meta name="theme-color" content="#0891b2" />
-    <title>Pocket-Derm</title>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.jsx"></script>
-  </body>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PocketDerm — Skin Health Monitoring</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+</head>
+<body>
+  <!-- Navigation -->
+  <nav class="navbar">
+    <div class="nav-brand">
+      <div class="nav-logo">
+        <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+          <circle cx="14" cy="14" r="13" stroke="#4F8EF7" stroke-width="2"/>
+          <circle cx="14" cy="14" r="6" fill="#4F8EF7" opacity="0.3"/>
+          <circle cx="14" cy="14" r="3" fill="#4F8EF7"/>
+        </svg>
+      </div>
+      <span class="brand-name">PocketDerm</span>
+    </div>
+    <div class="nav-tabs">
+      <button class="nav-tab active" data-screen="home">Home</button>
+      <button class="nav-tab" data-screen="scan">New Scan</button>
+      <button class="nav-tab" data-screen="history">History</button>
+      <button class="nav-tab" data-screen="assistant">Assistant</button>
+      <button class="nav-tab" data-screen="profile">Profile</button>
+    </div>
+    <div class="nav-profile">
+      <div class="avatar" id="nav-user">JD</div>
+    </div>
+  </nav>
+
+  <!-- Screens -->
+  <main class="main-content">
+
+    <!-- HOME SCREEN -->
+    <section id="screen-home" class="screen active">
+      <div class="hero">
+        <div class="hero-text">
+          <div class="badge">AI-Powered Skin Screening</div>
+          <h1>Monitor your skin health with confidence</h1>
+          <p>PocketDerm uses advanced computer vision to classify and track suspicious moles, giving you and your dermatologist the insights needed for early detection.</p>
+          <div class="hero-actions">
+            <button class="btn-primary" onclick="navigateTo('scan')">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M3 9a2 2 0 0 1 2-2h.93a2 2 0 0 0 1.664-.89l.812-1.22A2 2 0 0 1 10.07 4h3.86a2 2 0 0 1 1.664.89l.812 1.22A2 2 0 0 0 18.07 7H19a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+              Start New Scan
+            </button>
+            <button class="btn-secondary" onclick="navigateTo('history')">View History</button>
+          </div>
+        </div>
+        <div class="hero-visual">
+          <div class="phone-mockup">
+            <div class="phone-screen">
+              <div class="scan-animation">
+                <div class="scan-circle outer"></div>
+                <div class="scan-circle middle"></div>
+                <div class="scan-circle inner"></div>
+                <div class="scan-line"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="stats-row">
+        <div class="stat-card">
+          <div class="stat-icon blue"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
+          <div class="stat-info"><span class="stat-num">52%</span><span class="stat-label">Adults not up to date on skin screening</span></div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon orange"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></div>
+          <div class="stat-info"><span class="stat-num">7 in 10</span><span class="stat-label">U.S. adults behind on routine cancer screening</span></div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon green"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg></div>
+          <div class="stat-info"><span class="stat-num">Early</span><span class="stat-label">Detection dramatically improves outcomes</span></div>
+        </div>
+      </div>
+
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon">🔬</div>
+          <h3>ResNet-50 Classification</h3>
+          <p>Fine-tuned on dermatologist-verified mole data to classify lesions with confidence scoring.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🎯</div>
+          <h3>YOLO11s-sg Segmentation</h3>
+          <p>YOLO11s-sg model outlines mole boundaries precisely to track size and shape changes over time.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">💬</div>
+          <h3>AI Explanation</h3>
+          <p>Plain-language summaries generated for patients, plus structured clinical reports for dermatologists.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">📈</div>
+          <h3>Change Monitoring</h3>
+          <p>Track moles over time with visual overlays showing boundary changes between scans.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- SCAN SCREEN -->
+    <section id="screen-scan" class="screen">
+      <div class="scan-container">
+        <div class="scan-header">
+          <h2>New Mole Scan</h2>
+          <p>Upload or capture a close-up photo of the mole you want to analyze</p>
+        </div>
+
+        <div class="scan-steps">
+          <div class="step active" id="step-1">
+            <div class="step-num">1</div><span>Upload Image</span>
+          </div>
+          <div class="step-connector"></div>
+          <div class="step" id="step-2">
+            <div class="step-num">2</div><span>Analysis</span>
+          </div>
+          <div class="step-connector"></div>
+          <div class="step" id="step-3">
+            <div class="step-num">3</div><span>Results</span>
+          </div>
+        </div>
+
+        <!-- Upload Panel -->
+        <div id="upload-panel" class="upload-panel">
+          <div class="upload-zone" id="upload-zone">
+            <input type="file" id="file-input" accept="image/*" hidden />
+            <div class="upload-icon">
+              <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#4F8EF7" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+            </div>
+            <h3>Drop your image here</h3>
+            <p>or click to browse — JPG, PNG up to 10MB</p>
+            <button class="btn-upload" onclick="document.getElementById('file-input').click()">Choose Image</button>
+          </div>
+
+          <div class="scan-tips">
+            <h4>Tips for best results</h4>
+            <ul>
+              <li>📸 Use good lighting — natural light works best</li>
+              <li>🔍 Get as close as possible (2–5 cm away)</li>
+              <li>📐 Keep the mole centered in frame</li>
+              <li>🚫 Avoid shadows or glare on the skin</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Preview Panel -->
+        <div id="preview-panel" class="preview-panel hidden">
+          <div class="preview-layout">
+            <div class="preview-image-wrap">
+              <img id="preview-img" src="" alt="Mole preview" />
+              <canvas id="seg-canvas"></canvas>
+            </div>
+            <div class="preview-meta">
+              <h4>Image ready</h4>
+              <p id="file-name-display"></p>
+              <div class="body-location">
+                <label>Body location (optional)</label>
+                <select id="body-location">
+                  <option value="">Select location...</option>
+                  <option>Back</option>
+                  <option>Chest</option>
+                  <option>Arm (left)</option>
+                  <option>Arm (right)</option>
+                  <option>Leg (left)</option>
+                  <option>Leg (right)</option>
+                  <option>Face</option>
+                  <option>Neck</option>
+                  <option>Shoulder</option>
+                  <option>Other</option>
+                </select>
+              </div>
+              <div class="notes-field">
+                <label>Notes</label>
+                <textarea id="scan-notes" placeholder="Any changes you've noticed? (optional)"></textarea>
+              </div>
+              <div class="preview-actions">
+                <button class="btn-secondary" onclick="resetScan()">Re-upload</button>
+                <button class="btn-primary" onclick="runAnalysis()">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                  Analyze
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Analysis Loading -->
+        <div id="analysis-panel" class="analysis-panel hidden">
+          <div class="analysis-steps">
+            <div class="analysis-step" id="astep-1">
+              <div class="astep-icon pending">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+              </div>
+              <div class="astep-info">
+                <span class="astep-label">Preprocessing image</span>
+                <div class="astep-bar"><div class="astep-fill"></div></div>
+              </div>
+            </div>
+            <div class="analysis-step" id="astep-2">
+              <div class="astep-icon pending">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+              </div>
+              <div class="astep-info">
+                <span class="astep-label">ResNet-50 Classification</span>
+                <div class="astep-bar"><div class="astep-fill"></div></div>
+              </div>
+            </div>
+            <div class="analysis-step" id="astep-3">
+              <div class="astep-icon pending">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+              </div>
+              <div class="astep-info">
+                <span class="astep-label">YOLO11s-sg Segmentation</span>
+                <div class="astep-bar"><div class="astep-fill"></div></div>
+              </div>
+            </div>
+            <div class="analysis-step" id="astep-4">
+              <div class="astep-icon pending">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+              </div>
+              <div class="astep-info">
+                <span class="astep-label">Generating AI explanation</span>
+                <div class="astep-bar"><div class="astep-fill"></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Results Panel -->
+        <div id="results-panel" class="results-panel hidden"></div>
+      </div>
+    </section>
+
+    <!-- HISTORY SCREEN -->
+    <section id="screen-history" class="screen">
+      <div class="history-container">
+        <div class="history-header">
+          <h2>Scan History</h2>
+          <p>Track changes in your monitored moles over time</p>
+        </div>
+        <div id="history-list" class="history-list">
+          <!-- populated by JS -->
+        </div>
+        <div id="history-detail" class="history-detail hidden"></div>
+        <div id="history-empty" class="history-empty hidden">
+          <div class="empty-icon">🔍</div>
+          <h3>No scans yet</h3>
+          <p>Start your first scan to begin monitoring your skin health.</p>
+          <button class="btn-primary" onclick="navigateTo('scan')">Start First Scan</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- DERMATOLOGIST SCREEN -->
+    <section id="screen-dermatologist" class="screen">
+      <div class="derm-container">
+        <div class="derm-header">
+          <h2>Dermatologist Portal</h2>
+          <p>Structured clinical summaries ready to share with your specialist</p>
+        </div>
+
+        <div class="derm-layout">
+          <div class="derm-profile-card">
+            <div class="derm-avatar">DR</div>
+            <div class="derm-info">
+              <h4>Dr. Rebecca Chen</h4>
+              <span class="derm-specialty">Dermatology · Board Certified</span>
+              <span class="derm-status connected">● Connected</span>
+            </div>
+            <button class="btn-secondary small">Message</button>
+          </div>
+
+          <div id="derm-reports" class="derm-reports">
+            <!-- populated by JS -->
+          </div>
+
+          <div id="derm-empty" class="derm-empty">
+            <div class="empty-icon">📋</div>
+            <h3>No reports yet</h3>
+            <p>Complete a scan to generate a clinical summary for your dermatologist.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="screen-assistant" class="screen">
+      <div class="assistant-container">
+        <div class="assistant-header">
+          <h2>GenAI Assistant</h2>
+          <p>Ask PocketDerm for guidance, scan insights, and photo tips.</p>
+        </div>
+
+        <div class="assistant-card">
+          <div class="assistant-banner">Informational use only. This assistant does not provide medical diagnosis.</div>
+          <div class="assistant-messages" id="assistant-messages"></div>
+          <div class="assistant-quick-actions">
+            <button class="quick-action" onclick="handleAssistantSend('What does my result mean?')">What does my result mean?</button>
+            <button class="quick-action" onclick="handleAssistantSend('Should I book a dermatologist?')">Should I book a dermatologist?</button>
+            <button class="quick-action" onclick="handleAssistantSend('How do I take a better photo?')">How do I take a better photo?</button>
+            <button class="quick-action" onclick="handleAssistantSend('What is the ABCDE rule?')">What is the ABCDE rule?</button>
+          </div>
+          <div class="assistant-input-row">
+            <input id="assistant-input" type="text" placeholder="Type your question..." />
+            <button class="btn-primary" onclick="handleAssistantSend()">Send</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="screen-profile" class="screen">
+      <div class="profile-container">
+        <div class="profile-header">
+          <h2>Profile & Settings</h2>
+          <p>Keep your account up to date and manage connected dermatologist preferences.</p>
+        </div>
+
+        <div class="profile-grid">
+          <div class="profile-card">
+            <div class="profile-top-row">
+              <div class="profile-avatar-large" id="profile-avatar">JD</div>
+              <div>
+                <h3 id="profile-name">Jordan Doe</h3>
+                <p id="profile-email">jordan@example.com</p>
+              </div>
+            </div>
+            <div class="profile-details">
+              <div><span>Age</span><strong id="profile-age">32</strong></div>
+              <div><span>Skin type</span><strong id="profile-skin-type">Oily</strong></div>
+            </div>
+          </div>
+
+          <div class="connected-card">
+            <div class="connected-title">Connected Dermatologist</div>
+            <div class="connected-info">
+              <strong id="derm-name">Dr. Rebecca Chen</strong>
+              <span id="derm-clinic">Renew Skin Clinic</span>
+              <span id="derm-last-visit">Last visit: March 14, 2026</span>
+              <span class="status-pill connected">Connected</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="settings-section">
+          <h3>Notifications</h3>
+          <label class="toggle-row"><span>Push notifications</span><input id="toggle-push" type="checkbox" onchange="updateNotificationSetting('pushNotifications', this.checked)" /></label>
+          <label class="toggle-row"><span>Monthly check-up reminders</span><input id="toggle-monthly" type="checkbox" onchange="updateNotificationSetting('monthlyReminders', this.checked)" /></label>
+        </div>
+
+        <div class="privacy-section">
+          <div class="privacy-header">
+            <div>
+              <h3>Privacy & Legal</h3>
+              <p>Manage your account policies and learn more about how PocketDerm handles your data.</p>
+            </div>
+          </div>
+          <div class="privacy-list">
+            <button class="privacy-item" type="button">
+              <span>Privacy Policy</span>
+              <span class="privacy-arrow">›</span>
+            </button>
+            <button class="privacy-item" type="button">
+              <span>Data & Consent</span>
+              <span class="privacy-arrow">›</span>
+            </button>
+            <button class="privacy-item" type="button">
+              <span>Terms of Service</span>
+              <span class="privacy-arrow">›</span>
+            </button>
+            <button class="privacy-item" type="button">
+              <span>About</span>
+              <span class="privacy-arrow">›</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="logout-row">
+          <button class="btn-secondary" onclick="logout()">Logout</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="screen-login" class="screen">
+      <div class="auth-container">
+        <div class="auth-card">
+          <h2>Sign in to PocketDerm</h2>
+          <p>Enter any username and password to continue to the app.</p>
+          <form id="login-form" onsubmit="event.preventDefault(); loginUser()">
+            <label>Username</label>
+            <input id="login-username" type="text" placeholder="Username" required />
+            <label>Password</label>
+            <input id="login-password" type="password" placeholder="Password" required />
+            <button class="btn-primary" type="submit">Login</button>
+          </form>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Disclaimer Banner -->
+  <div class="disclaimer">
+    ⚠️ PocketDerm is a screening aid only and does not provide medical diagnosis. Always consult a qualified dermatologist for medical advice.
+  </div>
+
+  <script src="bedrock.js?v=20260501"></script>
+  <script src="app.js?v=20260501"></script>
+</body>
 </html>
